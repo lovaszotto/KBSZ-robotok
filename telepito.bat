@@ -41,6 +41,45 @@ echo.
 echo Telepitesi cel: %TARGET_DIR%
 echo.
 
+REM Fajlok masolasa a cel konyvtarba
+if not "%TARGET_DIR%" == "%CURDIR%" (
+    echo.
+    echo Fajlok masolasa a telepitesi konyvtarba...
+    
+    REM Robot fajlok masolasa
+    copy "*.robot" "%TARGET_DIR%\" >nul
+    if errorlevel 1 (
+        echo HIBA: Robot fajlok masolasa sikertelen!
+        pause
+        exit /b 1
+    )
+    
+    REM Python konyvtarak masolasa
+    copy "*.py" "%TARGET_DIR%\" >nul
+    if errorlevel 1 (
+        echo HIBA: Python fajlok masolasa sikertelen!
+        pause
+        exit /b 1
+    )
+    
+    REM Konfiguracios fajlok masolasa
+    copy "requirements.txt" "%TARGET_DIR%\" >nul 2>&1
+    copy "README.md" "%TARGET_DIR%\" >nul 2>&1
+    copy ".gitignore" "%TARGET_DIR%\" >nul 2>&1
+    
+    REM Resources mappa masolasa
+    if exist "resources" (
+        echo Resources mappa masolasa...
+        xcopy "resources" "%TARGET_DIR%\resources" /E /I /Y >nul
+    )
+    
+    echo Fajlok sikeresen masolva.
+    echo.
+    
+    REM Atlepunk a cel konyvtarba a tovabbiakhoz
+    cd /d "%TARGET_DIR%"
+)
+
 REM Python 3.13 ellenorzese
 echo Python verzio ellenorzese...
 "C:\Users\oLovasz\AppData\Local\Programs\Python\Python313\python.exe" --version >nul 2>&1
