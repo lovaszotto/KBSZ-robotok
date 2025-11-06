@@ -1,0 +1,53 @@
+# Robot Framework output files
+output.xml
+log.html
+report.html
+*.png
+*.jpg
+*.jpeg
+*.gif
+selenium-screenshot-*.png
+
+# Excel output files
+*.xlsx
+*.xls
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environment
+.venv/
+.venv_new/
+venv/
+env/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Downloaded media
+downloaded_media/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Interactive console output
+interactive_console_output.xml

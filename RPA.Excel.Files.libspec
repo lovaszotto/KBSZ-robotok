@@ -1,0 +1,2352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="RPA.Excel.Files" type="LIBRARY" format="HTML" scope="GLOBAL" generated="2025-07-09T11:59:19+00:00" specversion="6" source="C:\munka\_ROBOT_FRAMEWORK\projekt_mappa\venv\Lib\site-packages\RPA\Excel\Files.py" lineno="71">
+<version/>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;The &lt;cite&gt;Excel.Files&lt;/cite&gt; library can be used to read and write Excel
+files without the need to start the actual Excel application.&lt;/p&gt;
+&lt;p&gt;It supports both legacy &lt;tt class="docutils literal"&gt;.xls&lt;/tt&gt; files and modern &lt;tt class="docutils literal"&gt;.xlsx&lt;/tt&gt; files.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; To run macros or load password protected worksheets,
+please use the Excel application library.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Examples&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Robot Framework&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A common use-case is to load an existing Excel file as a table,
+which can be iterated over later in a Robot Framework keyword or task:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="gh"&gt;*** Settings ***&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="kn"&gt;Library&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="nn"&gt;RPA.Tables&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="kn"&gt;Library&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="nn"&gt;RPA.Excel.Files&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="gh"&gt;*** Keywords ***&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="gu"&gt;Read orders as table&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;Open workbook&lt;/span&gt;&lt;span class="p"&gt;    ${&lt;/span&gt;&lt;span class="nv"&gt;ORDERS_FILE&lt;/span&gt;&lt;span class="p"&gt;}
+    ${&lt;/span&gt;&lt;span class="nv"&gt;worksheet&lt;/span&gt;&lt;span class="p"&gt;}=    &lt;/span&gt;&lt;span class="nf"&gt;Read worksheet&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="s"&gt;header=&lt;/span&gt;&lt;span class="p"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;TRUE&lt;/span&gt;&lt;span class="p"&gt;}
+    ${&lt;/span&gt;&lt;span class="nv"&gt;orders&lt;/span&gt;&lt;span class="p"&gt;}=       &lt;/span&gt;&lt;span class="nf"&gt;Create table&lt;/span&gt;&lt;span class="p"&gt;     ${&lt;/span&gt;&lt;span class="nv"&gt;worksheet&lt;/span&gt;&lt;span class="p"&gt;}
+    [&lt;/span&gt;&lt;span class="kn"&gt;Return&lt;/span&gt;&lt;span class="p"&gt;]         ${&lt;/span&gt;&lt;span class="nv"&gt;orders&lt;/span&gt;&lt;span class="p"&gt;}
+    [&lt;/span&gt;&lt;span class="kn"&gt;Teardown&lt;/span&gt;&lt;span class="p"&gt;]       &lt;/span&gt;&lt;span class="nf"&gt;Close workbook&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Processing all worksheets in the Excel file and checking row count:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="gh"&gt;*** Settings ***&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="kn"&gt;Library&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="nn"&gt;RPA.Excel.Files&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="gh"&gt;*** Variables ***&lt;/span&gt;&lt;span class="p"&gt;
+${&lt;/span&gt;&lt;span class="nv"&gt;EXCEL_FILE&lt;/span&gt;&lt;span class="p"&gt;}   &lt;/span&gt;&lt;span class="s"&gt;/path/to/excel.xlsx&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="gh"&gt;*** Tasks ***&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="gu"&gt;Rows in the sheet&lt;/span&gt;&lt;span class="p"&gt;
+    [&lt;/span&gt;&lt;span class="kn"&gt;Setup&lt;/span&gt;&lt;span class="p"&gt;]      &lt;/span&gt;&lt;span class="nf"&gt;Open Workbook&lt;/span&gt;&lt;span class="p"&gt;    ${&lt;/span&gt;&lt;span class="nv"&gt;EXCEL_FILE&lt;/span&gt;&lt;span class="p"&gt;}
+    &amp;#64;{&lt;/span&gt;&lt;span class="nv"&gt;sheets&lt;/span&gt;&lt;span class="p"&gt;}=   &lt;/span&gt;&lt;span class="nf"&gt;List Worksheets&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;FOR&lt;/span&gt;&lt;span class="p"&gt;  ${&lt;/span&gt;&lt;span class="nv"&gt;sheet&lt;/span&gt;&lt;span class="p"&gt;}  &lt;/span&gt;&lt;span class="s"&gt;IN&lt;/span&gt;&lt;span class="p"&gt;   &amp;#64;{&lt;/span&gt;&lt;span class="nv"&gt;sheets&lt;/span&gt;&lt;span class="p"&gt;}
+        ${&lt;/span&gt;&lt;span class="nv"&gt;count&lt;/span&gt;&lt;span class="p"&gt;}=  &lt;/span&gt;&lt;span class="nf"&gt;Get row count in the sheet&lt;/span&gt;&lt;span class="p"&gt;   ${&lt;/span&gt;&lt;span class="nv"&gt;sheet&lt;/span&gt;&lt;span class="p"&gt;}
+        &lt;/span&gt;&lt;span class="nf"&gt;Log&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="s"&gt;Worksheet '&lt;/span&gt;&lt;span class="p"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;sheet&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="s"&gt;' has &lt;/span&gt;&lt;span class="p"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;count&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="s"&gt; rows&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;END&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="gh"&gt;*** Keywords ***&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="gu"&gt;Get row count in the sheet&lt;/span&gt;&lt;span class="p"&gt;
+    [&lt;/span&gt;&lt;span class="kn"&gt;Arguments&lt;/span&gt;&lt;span class="p"&gt;]      ${&lt;/span&gt;&lt;span class="nv"&gt;SHEET_NAME&lt;/span&gt;&lt;span class="p"&gt;}
+    ${&lt;/span&gt;&lt;span class="nv"&gt;sheet&lt;/span&gt;&lt;span class="p"&gt;}=        &lt;/span&gt;&lt;span class="nf"&gt;Read Worksheet&lt;/span&gt;&lt;span class="p"&gt;   ${&lt;/span&gt;&lt;span class="nv"&gt;SHEET_NAME&lt;/span&gt;&lt;span class="p"&gt;}
+    ${&lt;/span&gt;&lt;span class="nv"&gt;rows&lt;/span&gt;&lt;span class="p"&gt;}=         &lt;/span&gt;&lt;span class="nf"&gt;Get Length&lt;/span&gt;&lt;span class="p"&gt;  ${&lt;/span&gt;&lt;span class="nv"&gt;sheet&lt;/span&gt;&lt;span class="p"&gt;}
+    [&lt;/span&gt;&lt;span class="kn"&gt;Return&lt;/span&gt;&lt;span class="p"&gt;]         ${&lt;/span&gt;&lt;span class="nv"&gt;rows&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Creating a new Excel file with a dictionary:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="gh"&gt;*** Tasks ***&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="gu"&gt;Creating new Excel&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;Create Workbook&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="s"&gt;my_new_excel.xlsx&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;FOR&lt;/span&gt;&lt;span class="p"&gt;    ${&lt;/span&gt;&lt;span class="nv"&gt;index&lt;/span&gt;&lt;span class="p"&gt;}    &lt;/span&gt;&lt;span class="s"&gt;IN RANGE&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="s"&gt;20&lt;/span&gt;&lt;span class="p"&gt;
+        &amp;amp;{&lt;/span&gt;&lt;span class="nv"&gt;row&lt;/span&gt;&lt;span class="p"&gt;}=       &lt;/span&gt;&lt;span class="nf"&gt;Create Dictionary&lt;/span&gt;&lt;span class="p"&gt;
+        ...           &lt;/span&gt;&lt;span class="s"&gt;Row No&lt;/span&gt;&lt;span class="p"&gt;   ${&lt;/span&gt;&lt;span class="nv"&gt;index&lt;/span&gt;&lt;span class="p"&gt;}
+        ...           &lt;/span&gt;&lt;span class="s"&gt;Amount&lt;/span&gt;&lt;span class="p"&gt;   ${&lt;/span&gt;&lt;span class="nv"&gt;index * 25&lt;/span&gt;&lt;span class="p"&gt;}
+        &lt;/span&gt;&lt;span class="nf"&gt;Append Rows to Worksheet&lt;/span&gt;&lt;span class="p"&gt;  ${&lt;/span&gt;&lt;span class="nv"&gt;row&lt;/span&gt;&lt;span class="p"&gt;}  &lt;/span&gt;&lt;span class="s"&gt;header=&lt;/span&gt;&lt;span class="p"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;TRUE&lt;/span&gt;&lt;span class="p"&gt;}
+    &lt;/span&gt;&lt;span class="nf"&gt;END&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;Save Workbook&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Creating a new Excel file with a list:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="gh"&gt;*** Variables ***&lt;/span&gt;&lt;span class="p"&gt;
+&amp;#64;{&lt;/span&gt;&lt;span class="nv"&gt;heading&lt;/span&gt;&lt;span class="p"&gt;}   &lt;/span&gt;&lt;span class="s"&gt;Row No&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="s"&gt;Amount&lt;/span&gt;&lt;span class="p"&gt;
+&amp;#64;{&lt;/span&gt;&lt;span class="nv"&gt;rows&lt;/span&gt;&lt;span class="p"&gt;}      ${&lt;/span&gt;&lt;span class="nv"&gt;heading&lt;/span&gt;&lt;span class="p"&gt;}
+
+&lt;/span&gt;&lt;span class="gh"&gt;*** Tasks ***&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="gu"&gt;Creating new Excel&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;Create Workbook&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="s"&gt;my_new_excel.xlsx&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;FOR&lt;/span&gt;&lt;span class="p"&gt;    ${&lt;/span&gt;&lt;span class="nv"&gt;index&lt;/span&gt;&lt;span class="p"&gt;}    &lt;/span&gt;&lt;span class="s"&gt;IN RANGE&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="s"&gt;1&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="s"&gt;20&lt;/span&gt;&lt;span class="p"&gt;
+        &amp;#64;{&lt;/span&gt;&lt;span class="nv"&gt;row&lt;/span&gt;&lt;span class="p"&gt;}=         &lt;/span&gt;&lt;span class="nf"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;   ${&lt;/span&gt;&lt;span class="nv"&gt;index&lt;/span&gt;&lt;span class="p"&gt;}   ${&lt;/span&gt;&lt;span class="nv"&gt;index * 25&lt;/span&gt;&lt;span class="p"&gt;}
+        &lt;/span&gt;&lt;span class="nf"&gt;Append To List&lt;/span&gt;&lt;span class="p"&gt;  ${&lt;/span&gt;&lt;span class="nv"&gt;rows&lt;/span&gt;&lt;span class="p"&gt;}  ${&lt;/span&gt;&lt;span class="nv"&gt;row&lt;/span&gt;&lt;span class="p"&gt;}
+    &lt;/span&gt;&lt;span class="nf"&gt;END&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="nf"&gt;Append Rows to Worksheet&lt;/span&gt;&lt;span class="p"&gt;  ${&lt;/span&gt;&lt;span class="nv"&gt;rows&lt;/span&gt;&lt;span class="p"&gt;}
+    &lt;/span&gt;&lt;span class="nf"&gt;Save Workbook&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Python&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The library can also be imported directly into Python.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nn"&gt;RPA.Excel.Files&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Files&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;read_excel_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;worksheet&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="n"&gt;lib&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Files&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;worksheet&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="k"&gt;finally&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;        &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<tags>
+</tags>
+<inits>
+</inits>
+<keywords>
+<kw name="Append Rows To Worksheet" lineno="715">
+<arguments repr="content: Any, name: str | None = None, header: bool = False, start: int | None = None, formatting_as_empty: bool | None = False">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="content: Any">
+<name>content</name>
+<type name="Any" typedoc="Any"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="header: bool = False">
+<name>header</name>
+<type name="bool" typedoc="boolean"/>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="start: int | None = None">
+<name>start</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="formatting_as_empty: bool | None = False">
+<name>formatting_as_empty</name>
+<type name="Union" union="true">
+<type name="bool" typedoc="boolean"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>False</default>
+</arg>
+</arguments>
+<returntype name="List" typedoc="list">
+<type name="dict" typedoc="dictionary"/>
+</returntype>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Append values to the end of the worksheet.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param content:&lt;/th&gt;&lt;td class="field-body"&gt;Rows of values to append&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet to append to (optional).
+Defaults to the active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param header:&lt;/th&gt;&lt;td class="field-body"&gt;Set rows according to existing header row&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param start:&lt;/th&gt;&lt;td class="field-body"&gt;Start of data, NOTE: Only required when header is True&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param formatting_as_empty:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;if True, the cells containing only
+formatting (no values) are considered empty.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;List of dictionaries that represents the worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;content&lt;/tt&gt; argument can be of any tabular format. Typically,
+this is a Table object created by the &lt;tt class="docutils literal"&gt;RPA.Tables&lt;/tt&gt; library,
+but it can also be a list of lists, or a list of dictionaries.&lt;/p&gt;
+&lt;p&gt;If the &lt;tt class="docutils literal"&gt;header&lt;/tt&gt; flag is enabled, the existing header in the worksheet
+is used to insert values in the correct columns. This assumes that
+that source data has this data available.&lt;/p&gt;
+&lt;p&gt;If the header is not on the first row of the worksheet,
+the &lt;tt class="docutils literal"&gt;start&lt;/tt&gt; argument can be used to give the correct row index.&lt;/p&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Append an existing Table object
+ # Create a new table using a Dictionary of Lists&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;#64;{table_name}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Sara&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Beth&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Amy&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;#64;{table_age}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${48}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${21}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${57}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;amp;{table}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create Dictionary&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;name=${table_name}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;age=${table_age}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Create Table&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${table}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Append rows to worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${table}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Append to a worksheet with headers on row 5
+ # Create a new table using a Dictionary of Lists&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;#64;{table_name}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Sara&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Beth&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Amy&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;#64;{table_age}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${48}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${21}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${57}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;amp;{table}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create Dictionary&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;name=${table_name}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;age=${table_age}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Create Table&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${table}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Append rows to worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${table}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;header=${TRUE}&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;start=5&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Append an existing Table object&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;table&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Sara&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Beth&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Amy&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="s2"&gt;&amp;quot;age&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;  &lt;span class="p"&gt;[&lt;/span&gt;    &lt;span class="mi"&gt;48&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;     &lt;span class="mi"&gt;21&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;     &lt;span class="mi"&gt;57&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append_rows_to_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;table&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Append to a worksheet with headers on row 5&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;table&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Sara&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Beth&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Amy&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="s2"&gt;&amp;quot;age&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;  &lt;span class="p"&gt;[&lt;/span&gt;    &lt;span class="mi"&gt;48&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;     &lt;span class="mi"&gt;21&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;     &lt;span class="mi"&gt;57&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append_rows_to_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;table&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;header&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Append values to the end of the worksheet.</shortdoc>
+</kw>
+<kw name="Auto Size Columns" lineno="1443">
+<arguments repr="start_column: int | str, end_column: int | str | None = None, width: int | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="start_column: int | str">
+<name>start_column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="end_column: int | str | None = None">
+<name>end_column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="width: int | None = None">
+<name>width</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Auto size column widths.&lt;/p&gt;
+&lt;p&gt;Note. non-default font sizes might cause auto sizing issues&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param start_column:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;column number or name to start from&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param end_column:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;optional column number or name for last column&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param width:&lt;/th&gt;&lt;td class="field-body"&gt;if given will resize columns to this size, otherwise
+will auto_size&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Auto Size Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;D&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;# will try auto size
+Auto Size Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;B&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;D&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;16&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;# will set A-D columns sizes to 16
+Auto Size Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;width=24&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;# will set column A size to 24&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;auto_size_columns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;D&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;auto_size_columns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;C&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;40&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Auto size column widths.</shortdoc>
+</kw>
+<kw name="Clear Cell Range" lineno="1045">
+<arguments repr="range_string: str">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="range_string: str">
+<name>range_string</name>
+<type name="str" typedoc="string"/>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Clear cell values for a given range.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param range_string:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;single cell or range of cells&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# area of cells
+Clear Cell Range&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;A9:A100&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;# single cell
+Clear Cell Range&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;A2&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;clear_cell_range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A1&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;clear_cell_range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;B2:B50&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Clear cell values for a given range.</shortdoc>
+</kw>
+<kw name="Close Workbook" lineno="359">
+<arguments repr="">
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Close the active workbook.&lt;/p&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Close active workbook
+Close Workbook&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Close active workbook&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Close the active workbook.</shortdoc>
+</kw>
+<kw name="Copy Cell Values" lineno="1251">
+<arguments repr="source_range: str, target: str">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="source_range: str">
+<name>source_range</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="target: str">
+<name>target</name>
+<type name="str" typedoc="string"/>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Copy cells from source to target.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param source_range:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;single cell or range of cells&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param target:&lt;/th&gt;&lt;td class="field-body"&gt;copy to this cell&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Copy Cell Values&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A1:D4&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;G10&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy_cell_values&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A1:D4&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;G10&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Copy cells from source to target.</shortdoc>
+</kw>
+<kw name="Create Workbook" lineno="220">
+<arguments repr="path: str | None = None, fmt: str = xlsx, sheet_name: str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="path: str | None = None">
+<name>path</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="fmt: str = xlsx">
+<name>fmt</name>
+<type name="str" typedoc="string"/>
+<default>xlsx</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="sheet_name: str | None = None">
+<name>sheet_name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<returntype name="Union" union="true">
+<type name="XlsWorkbook"/>
+<type name="XlsxWorkbook"/>
+</returntype>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Create and open a new Excel workbook.&lt;/p&gt;
+&lt;p&gt;Automatically also creates a new worksheet with the name &lt;cite&gt;sheet_name&lt;/cite&gt;.
+(defaults to &amp;quot;Sheet&amp;quot;)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Must be paired with the &lt;tt class="docutils literal"&gt;Save Workbook&lt;/tt&gt; keyword
+or the newly created workbook will be deleted upon robot completion.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; The file name/path must be set in either the &lt;tt class="docutils literal"&gt;Create Workbook&lt;/tt&gt;
+keyword or the &lt;tt class="docutils literal"&gt;Save Workbook&lt;/tt&gt; keyword and must include the file extension.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param path:&lt;/th&gt;&lt;td class="field-body"&gt;Save path for workbook; defaults to robot root if not provided.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param fmt:&lt;/th&gt;&lt;td class="field-body"&gt;Format of workbook, i.e. xlsx or xls; Defaults to xlsx if not
+provided.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param sheet_name:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;Custom name for the initial sheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;Workbook object.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Create modern format workbook.
+Create Workbook&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;orders.xlsx&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Create modern format workbook with custom sheet name.
+Create Workbook&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;sheet_name=MyCustomSheetName&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;orders.xlsx&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Create modern format workbook with a path set.
+Create Workbook&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;path=${OUTPUT_DIR}${/}orders.xlsx&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Create legacy format workbook.
+Create Workbook&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;fmt=xls&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;orders.xls&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Create legacy format workbook with a path set.
+# Note that the file name must be set in the &lt;a href="#Create%20Workbook" class="name"&gt;Create Workbook&lt;/a&gt; keyword
+#  if the path argument is used.
+Create Workbook&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;path=${OUTPUT_DIR}${/}orders.xls&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;fmt=xls&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Create modern format workbook with defaults.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Files&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;orders.xlsx&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Create modern format workbook with a path set.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Files&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;./output/orders.xlsx&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fmt&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;xlsx&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Create legacy format workbook.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Files&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fmt&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;xls&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;orders.xls&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Create legacy format workbook with a path set.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# Note that the file name must be set in the &lt;a href="#Create%20Workbook" class="name"&gt;Create Workbook&lt;/a&gt; keyword&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;#  if the path is used.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Files&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;./output/orders.xls&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fmt&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;xls&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Create and open a new Excel workbook.</shortdoc>
+</kw>
+<kw name="Create Worksheet" lineno="539">
+<arguments repr="name: str, content: Any | None = None, exist_ok: bool | None = False, header: bool | None = False">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="name: str">
+<name>name</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="content: Any | None = None">
+<name>content</name>
+<type name="Union" union="true">
+<type name="Any" typedoc="Any"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="exist_ok: bool | None = False">
+<name>exist_ok</name>
+<type name="Union" union="true">
+<type name="bool" typedoc="boolean"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="header: bool | None = False">
+<name>header</name>
+<type name="Union" union="true">
+<type name="bool" typedoc="boolean"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>False</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Create a new worksheet in the current workbook.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of new worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param content:&lt;/th&gt;&lt;td class="field-body"&gt;Optional content for worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param exist_ok:&lt;/th&gt;&lt;td class="field-body"&gt;If &lt;cite&gt;False&lt;/cite&gt;, raise an error if name is already in use&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param header:&lt;/th&gt;&lt;td class="field-body"&gt;If content is provided, write headers to worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Create a new blank worksheet named &amp;quot;Customers&amp;quot;
+Create Worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Customers&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Create a new worksheet with headers and contents using
+# a List of Dictonaries
+# Don't forget to &lt;a href="#Save%20Workbook" class="name"&gt;Save Workbook&lt;/a&gt; once your changes are complete
+&amp;amp;{Employees_Row1}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create Dictionary&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;name=Mark&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;age=${58}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;amp;{Employees_Row2}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create Dictionary&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;name=John&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;age=${22}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;amp;{Employees_Row3}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create Dictionary&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;name=Adam&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;age=${67}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;#64;{Worksheet_Data}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${Worksheet_Data_row1}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${Worksheet_Data_row2}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${Worksheet_Data_row3}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Create Worksheet&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;name=Employees&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;content=${Worksheet_Data}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;header=True&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Create a new workseet using a Dictionary of Lists
+# Don't forget to &lt;a href="#Save%20Workbook" class="name"&gt;Save Workbook&lt;/a&gt; once your changes are complete
+&amp;#64;{Employees_name}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Mark&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;John&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Adam&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;#64;{Employees_age}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${58}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${22}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${67}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;&amp;amp;{Worksheet_Data}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create Dictionary&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;name=${Worksheet_Data_name}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;age=${Worksheet_Data_age}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Create Worksheet&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;name=Employees&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;content=${Worksheet_Data}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;header=True&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Save Workbook&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Create a new blank worksheet named &amp;quot;Customers&amp;quot;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Customers&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Create a new workseet using a List of Dictionaries&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# Don't forget to &lt;a href="#Save%20Workbook" class="name"&gt;Save Workbook&lt;/a&gt; once your changes are complete&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;Worksheet_Data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Mark&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;age&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;58&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;John&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;age&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;22&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Adam&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;age&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;67&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Employees&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;Worksheet_Data&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;header&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Create a new workseet using a Dictionary of Lists&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# Don't forget to &lt;a href="#Save%20Workbook" class="name"&gt;Save Workbook&lt;/a&gt; once your changes are complete&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;Worksheet_Data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Mark&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;John&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Adam&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="s2"&gt;&amp;quot;age&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;  &lt;span class="p"&gt;[&lt;/span&gt;    &lt;span class="mi"&gt;58&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;     &lt;span class="mi"&gt;22&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;     &lt;span class="mi"&gt;67&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;    &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Employees&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;Worksheet_Data&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;header&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Create a new worksheet in the current workbook.</shortdoc>
+</kw>
+<kw name="Delete Columns" lineno="1103">
+<arguments repr="start: int | str, end: int | str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="start: int | str">
+<name>start</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="end: int | str | None = None">
+<name>end</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Delete column or columns beginning from start column number/name to
+possible end column number/name.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param start:&lt;/th&gt;&lt;td class="field-body"&gt;column number or name to start deletion from&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param end:&lt;/th&gt;&lt;td class="field-body"&gt;optional column number or name for last column to delete&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Delete Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;C&lt;/span&gt;&lt;span class="p"&gt;       &lt;/span&gt;&lt;span class="c"&gt;# delete column C
+Delete Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;3&lt;/span&gt;&lt;span class="p"&gt;       &lt;/span&gt;&lt;span class="c"&gt;# delete column 3 (same as C)
+Delete Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;E&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;AA&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;# delete rows E-AA&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete_columns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;D&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete_rows&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;JJ&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Delete column or columns beginning from start column number/name to possible end column number/name.</shortdoc>
+</kw>
+<kw name="Delete Rows" lineno="1076">
+<arguments repr="start: int, end: int | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="start: int">
+<name>start</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="end: int | None = None">
+<name>end</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Delete row or rows beginning from start row number to
+possible end row number.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param start:&lt;/th&gt;&lt;td class="field-body"&gt;row number to start deletion from&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param end:&lt;/th&gt;&lt;td class="field-body"&gt;optional row number for last row to delete&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Delete Rows&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;2&lt;/span&gt;&lt;span class="p"&gt;       &lt;/span&gt;&lt;span class="c"&gt;# delete row 2
+Delete Rows&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;5&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;10&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;# delete rows 5-10&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete_rows&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete_rows&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Delete row or rows beginning from start row number to possible end row number.</shortdoc>
+</kw>
+<kw name="Find Empty Row" lineno="838">
+<arguments repr="name: str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<returntype name="int" typedoc="integer"/>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Find the first empty row after existing content,
+and return the row number.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet (optional). Defaults to the active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;First row number of empty row&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;${next}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Find empty row&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="nb"&gt;next&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find_empty_row&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Find the first empty row after existing content, and return the row number.</shortdoc>
+</kw>
+<kw name="Get Active Worksheet" lineno="487">
+<arguments repr="">
+</arguments>
+<returntype name="str" typedoc="string"/>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Get the name of the worksheet which is currently active.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;Active worksheet name&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;${Active_Worksheet}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Get Active Worksheet&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;Active_Worksheet&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_active_worksheet&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Get the name of the worksheet which is currently active.</shortdoc>
+</kw>
+<kw name="Get Cell Value" lineno="858">
+<arguments repr="row: int, column: str | int, name: str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="row: int">
+<name>row</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="column: str | int">
+<name>column</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="int" typedoc="integer"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<returntype name="Any" typedoc="Any"/>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Get a cell value in the given worksheet.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param row:&lt;/th&gt;&lt;td class="field-body"&gt;Index of row to read, e.g. 3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param column:&lt;/th&gt;&lt;td class="field-body"&gt;Name or index of column, e.g. C or 7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet (optional). Defaults to active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;Cell value&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Read header names
+${column1}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Get cell value&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;${column2}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Get cell value&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;B&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;${column3}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Get cell value&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;C&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Read header names&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;column1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_cell_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;column2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_cell_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;B&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;column3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_cell_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;C&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Get a cell value in the given worksheet.</shortdoc>
+</kw>
+<kw name="Get Worksheet Value" lineno="1022">
+<arguments repr="row: int, column: str | int, name: str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="row: int">
+<name>row</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="column: str | int">
+<name>column</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="int" typedoc="integer"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<returntype name="Any" typedoc="Any"/>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Alias for keyword &lt;tt class="docutils literal"&gt;Get cell value&lt;/tt&gt;, see the original keyword
+for documentation.&lt;/p&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Alias for keyword ``Get cell value``, see the original keyword for documentation.</shortdoc>
+</kw>
+<kw name="Hide Columns" lineno="1496">
+<arguments repr="start_column: int | str, end_column: int | str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="start_column: int | str">
+<name>start_column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="end_column: int | str | None = None">
+<name>end_column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Hide column or columns in worksheet.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param start_column:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;column number or name to start from&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param end_column:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;optional column number or name for last column&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Hide Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;D&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;# hide columns A-D
+Hide Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;        &lt;/span&gt;&lt;span class="c"&gt;# hide column A&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hide_columns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;D&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hide_columns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Hide column or columns in worksheet.</shortdoc>
+</kw>
+<kw name="Insert Columns After" lineno="1170">
+<arguments repr="column: int | str, amount: int = 1">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="column: int | str">
+<name>column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="amount: int = 1">
+<name>amount</name>
+<type name="int" typedoc="integer"/>
+<default>1</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Insert column or columns after a column number/name.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param column:&lt;/th&gt;&lt;td class="field-body"&gt;insert after this column&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param amount:&lt;/th&gt;&lt;td class="field-body"&gt;number of columns to insert, default 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Insert Columns After&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;C&lt;/span&gt;&lt;span class="p"&gt;      &lt;/span&gt;&lt;span class="c"&gt;# insert 1 column after column C
+Insert Columns Before&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;3&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;# insert 3 columns after column A&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_columns_after&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;C&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_columns_after&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Insert column or columns after a column number/name.</shortdoc>
+</kw>
+<kw name="Insert Columns Before" lineno="1141">
+<arguments repr="column: int | str, amount: int = 1">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="column: int | str">
+<name>column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="amount: int = 1">
+<name>amount</name>
+<type name="int" typedoc="integer"/>
+<default>1</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Insert column or columns before a column number/name.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param column:&lt;/th&gt;&lt;td class="field-body"&gt;insert before this column&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param amount:&lt;/th&gt;&lt;td class="field-body"&gt;number of columns to insert, default 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Insert Columns Before&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;C&lt;/span&gt;&lt;span class="p"&gt;      &lt;/span&gt;&lt;span class="c"&gt;# insert 1 column before column C
+Insert Columns Before&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;3&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;# insert 3 columns before column A&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_columns_before&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;C&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_columns_before&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Insert column or columns before a column number/name.</shortdoc>
+</kw>
+<kw name="Insert Image To Worksheet" lineno="978">
+<arguments repr="row: int, column: int | str, path: str, scale: float = 1.0, name: str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="row: int">
+<name>row</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="column: int | str">
+<name>column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="path: str">
+<name>path</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="scale: float = 1.0">
+<name>scale</name>
+<type name="float" typedoc="float"/>
+<default>1.0</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Insert an image into the given cell.&lt;/p&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;path&lt;/tt&gt; argument should be a local file path to the image file.&lt;/p&gt;
+&lt;p&gt;By default the image is inserted in the original size, but it can
+be scaled with the &lt;tt class="docutils literal"&gt;scale&lt;/tt&gt; argument. It's scaled with a factor
+where the value &lt;tt class="docutils literal"&gt;1.0&lt;/tt&gt; is the default.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param row:&lt;/th&gt;&lt;td class="field-body"&gt;Index of row to write&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param column:&lt;/th&gt;&lt;td class="field-body"&gt;Name or index of column&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param path:&lt;/th&gt;&lt;td class="field-body"&gt;Path to image file&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param scale:&lt;/th&gt;&lt;td class="field-body"&gt;Scale of image (optional). Default value is &amp;quot;1.0&amp;quot;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet (optional). Defaults to the active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Insert image to worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${last_row}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;screenshot.png&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_image_to_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;last_row&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;screenshot.png&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Insert an image into the given cell.</shortdoc>
+</kw>
+<kw name="Insert Rows After" lineno="1225">
+<arguments repr="row: int, amount: int = 1">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="row: int">
+<name>row</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="amount: int = 1">
+<name>amount</name>
+<type name="int" typedoc="integer"/>
+<default>1</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Insert row or rows after a row number.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param row:&lt;/th&gt;&lt;td class="field-body"&gt;insert after this row&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param amount:&lt;/th&gt;&lt;td class="field-body"&gt;number of rows to insert, default 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Insert Rows After&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;3&lt;/span&gt;&lt;span class="p"&gt;      &lt;/span&gt;&lt;span class="c"&gt;# insert 1 row after row 3
+Insert Rows After&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;3&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;# insert 3 rows after row 1&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_rows_after&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_rows_after&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Insert row or rows after a row number.</shortdoc>
+</kw>
+<kw name="Insert Rows Before" lineno="1199">
+<arguments repr="row: int, amount: int = 1">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="row: int">
+<name>row</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="amount: int = 1">
+<name>amount</name>
+<type name="int" typedoc="integer"/>
+<default>1</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Insert row or rows before a row number.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param row:&lt;/th&gt;&lt;td class="field-body"&gt;insert before this row&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param amount:&lt;/th&gt;&lt;td class="field-body"&gt;number of rows to insert, default 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Insert Rows Before&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;3&lt;/span&gt;&lt;span class="p"&gt;      &lt;/span&gt;&lt;span class="c"&gt;# insert 1 row before row 3
+Insert Rows Before&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;3&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;# insert 3 rows before row 1&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_rows_before&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;insert_rows_before&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Insert row or rows before a row number.</shortdoc>
+</kw>
+<kw name="List Worksheets" lineno="440">
+<arguments repr="">
+</arguments>
+<returntype name="List" typedoc="list">
+<type name="str" typedoc="string"/>
+</returntype>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;List all names of worksheets in the given workbook.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;List containing the names of the worksheets&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# List Worksheets will read the worksheet names into a list variable
+# The variable should be declared with the List type &amp;quot;&amp;#64;&amp;quot; when being used
+# to store the sheet names from the List Worksets keyword
+&amp;#64;{sheets}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;List Worksheets&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# List Worksheets will read the worksheet names into a list variable&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# The variable should be declared with the List type &amp;quot;&amp;#64;&amp;quot; when being used&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# to store the sheet names from the List Worksets keyword&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;sheets&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;list_worksheets&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>List all names of worksheets in the given workbook.</shortdoc>
+</kw>
+<kw name="Move Range" lineno="1627">
+<arguments repr="range_string: str, rows: int = 0, columns: int = 0, translate: bool = True">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="range_string: str">
+<name>range_string</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="rows: int = 0">
+<name>rows</name>
+<type name="int" typedoc="integer"/>
+<default>0</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="columns: int = 0">
+<name>columns</name>
+<type name="int" typedoc="integer"/>
+<default>0</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="translate: bool = True">
+<name>translate</name>
+<type name="bool" typedoc="boolean"/>
+<default>True</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Move range of cells by given amount of rows and columns.&lt;/p&gt;
+&lt;p&gt;Formulas are translated to match new location by default.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note&lt;/em&gt;. There is a bug in the openpyxl on moving negative rows/columns.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param range_string:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;cell range&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param rows:&lt;/th&gt;&lt;td class="field-body"&gt;number of rows to move&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param columns:&lt;/th&gt;&lt;td class="field-body"&gt;number of columns to move&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param translate:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;are formulas translated for a new location&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# move range 4 rows down
+Move Range&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;E2:E10&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;rows=4&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;# move range 2 rows down, 2 columns right
+Move Range&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;E2:E10&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;rows=2&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;columns=2&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;move_range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;E2:E10&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rows&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;move_range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;E2:E10&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rows&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;columns&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Move range of cells by given amount of rows and columns.</shortdoc>
+</kw>
+<kw name="Open Workbook" lineno="310">
+<arguments repr="path: str, data_only: bool | None = False, read_only: bool | None = False">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="path: str">
+<name>path</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="data_only: bool | None = False">
+<name>data_only</name>
+<type name="Union" union="true">
+<type name="bool" typedoc="boolean"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="read_only: bool | None = False">
+<name>read_only</name>
+<type name="Union" union="true">
+<type name="bool" typedoc="boolean"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>False</default>
+</arg>
+</arguments>
+<returntype name="Union" union="true">
+<type name="XlsWorkbook"/>
+<type name="XlsxWorkbook"/>
+</returntype>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Open an existing Excel workbook.&lt;/p&gt;
+&lt;p&gt;Opens the workbook in memory and sets it as the active workbook.
+&lt;strong&gt;This library can only have one workbook open at a time, and
+any previously opened workbooks are closed first.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The file can be in either &lt;tt class="docutils literal"&gt;.xlsx&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;.xls&lt;/tt&gt; format.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param path:&lt;/th&gt;&lt;td class="field-body"&gt;path to Excel file&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param data_only:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;controls whether cells with formulas have either
+the formula (default, False) or the value stored the last time Excel
+read the sheet (True). Affects only &lt;tt class="docutils literal"&gt;.xlsx&lt;/tt&gt; files.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;Workbook object&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Open workbook with only path provided
+Open Workbook&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;path/to/file.xlsx&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Open workbook with path provided and reading formulas in cells
+# as the value stored
+# Note: Can only be used with XLSX workbooks
+Open Workbook&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;path/to/file.xlsx&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;data_only=True&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Open workbook with only path provided&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;path/to/file.xlsx&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Open workbook with path provided and reading formulas in cells&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# as the value stored&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# Note: Can only be used with XLSX workbooks&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;path/to/file.xlsx&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data_only&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Open an existing Excel workbook.</shortdoc>
+</kw>
+<kw name="Read Worksheet" lineno="621">
+<arguments repr="name: str | None = None, header: bool | None = False, start: int | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="header: bool | None = False">
+<name>header</name>
+<type name="Union" union="true">
+<type name="bool" typedoc="boolean"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="start: int | None = None">
+<name>start</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<returntype name="List" typedoc="list">
+<type name="dict" typedoc="dictionary"/>
+</returntype>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Read the content of a worksheet into a list of dictionaries.&lt;/p&gt;
+&lt;p&gt;Each key in the dictionary will be either values from the header row,
+or Excel-style column letters.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet to read (optional).
+Defaults to the active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param header:&lt;/th&gt;&lt;td class="field-body"&gt;If &lt;cite&gt;True&lt;/cite&gt;, use the first row of the worksheet
+as headers for the rest of the rows. Default is &lt;cite&gt;False&lt;/cite&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param start:&lt;/th&gt;&lt;td class="field-body"&gt;Row index to start reading data from (1-indexed).
+Default value is row 1.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;List of dictionaries that represents the worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# The most simple form. Column keys will be Column letters.
+${rows}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Read Worksheet&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Since &lt;span class="name"&gt;header=True&lt;/span&gt; the keys will be the header values
+${rows}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Read Worksheet&lt;/span&gt;&lt;span class="p"&gt;     &lt;/span&gt;&lt;span class="c"&gt;header=True&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Uses the header values as keys and starts reading at row 3
+${rows}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Read Worksheet&lt;/span&gt;&lt;span class="p"&gt;     &lt;/span&gt;&lt;span class="c"&gt;header=True&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;start=${3}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# The most simple form. Keys will be Column letters.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;rows&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_worksheet&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Since &lt;span class="name"&gt;header=True&lt;/span&gt; the keys will be the header values&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;rows&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;header&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Uses the header values as keys and starts reading at row 3&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;rows&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;header&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Read the content of a worksheet into a list of dictionaries.</shortdoc>
+</kw>
+<kw name="Read Worksheet As Table" lineno="667">
+<arguments repr="name: str | None = None, header: bool = False, trim: bool = True, start: int | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="header: bool = False">
+<name>header</name>
+<type name="bool" typedoc="boolean"/>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="trim: bool = True">
+<name>trim</name>
+<type name="bool" typedoc="boolean"/>
+<default>True</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="start: int | None = None">
+<name>start</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<returntype name="Table"/>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Read the contents of a worksheet into a Table container. Allows
+sorting/filtering/manipulating using the &lt;tt class="docutils literal"&gt;RPA.Tables&lt;/tt&gt; library.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet to read (optional).
+Defaults to the active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param header:&lt;/th&gt;&lt;td class="field-body"&gt;If &lt;cite&gt;True&lt;/cite&gt;, use the first row of the worksheet
+as headers for the rest of the rows. Default value is False.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param trim:&lt;/th&gt;&lt;td class="field-body"&gt;Remove all empty rows from the end of the worksheet.
+Default value is True.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param start:&lt;/th&gt;&lt;td class="field-body"&gt;Row index to start reading data from (1-indexed).
+Default value is row 1.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;Table object that represents the worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# The most simple form. Column keys will be Column letters.
+${table}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Read Worksheet As Table&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Since &lt;span class="name"&gt;header=True&lt;/span&gt; the keys will be the header values
+${table}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Read Worksheet As Table&lt;/span&gt;&lt;span class="p"&gt;     &lt;/span&gt;&lt;span class="c"&gt;header=True&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Uses the header values as keys and starts reading at row 3
+${table}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Read Worksheet As Table&lt;/span&gt;&lt;span class="p"&gt;     &lt;/span&gt;&lt;span class="c"&gt;header=True&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;start=${3}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# The most simple form. Keys will be Column letters.&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;table&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_worksheet_as_table&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Since &lt;span class="name"&gt;header=True&lt;/span&gt; the keys will be the header values&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;table&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_worksheet_as_table&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;header&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Uses the header values as keys and starts reading at row 3&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;table&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_worksheet_as_table&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;header&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Read the contents of a worksheet into a Table container. Allows sorting/filtering/manipulating using the ``RPA.Tables`` library.</shortdoc>
+</kw>
+<kw name="Remove Worksheet" lineno="790">
+<arguments repr="name: str = None">
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str = None">
+<name>name</name>
+<type name="str" typedoc="string"/>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Remove a worksheet from the active workbook.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet to remove (optional).
+Defaults to the active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Remove last worksheet
+${sheets}=&lt;/span&gt;&lt;span class="p"&gt;       &lt;/span&gt;&lt;span class="c"&gt;List worksheets&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Remove worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${sheets}[-1]&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Remove worksheet by name
+Remove Worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Sheet&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Remove last worksheet&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;sheets&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;list_worksheets&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;remove_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sheets&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Remove worksheet by name&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;remove_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Sheet&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Remove a worksheet from the active workbook.</shortdoc>
+</kw>
+<kw name="Rename Worksheet" lineno="819">
+<arguments repr="src_name: str, dst_name: str">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="src_name: str">
+<name>src_name</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="dst_name: str">
+<name>dst_name</name>
+<type name="str" typedoc="string"/>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Rename an existing worksheet in the active workbook.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param src_name:&lt;/th&gt;&lt;td class="field-body"&gt;Current name of worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param dst_name:&lt;/th&gt;&lt;td class="field-body"&gt;Future name of worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Rename worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Sheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Orders&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rename_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Sheet&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Orders&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Rename an existing worksheet in the active workbook.</shortdoc>
+</kw>
+<kw name="Save Workbook" lineno="380">
+<arguments repr="path: str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="path: str | None = None">
+<name>path</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<returntype name="Union" union="true">
+<type name="XlsWorkbook"/>
+<type name="XlsxWorkbook"/>
+</returntype>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Save the active workbook.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; No changes to the workbook are saved to the actual file unless
+this keyword is called.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param path:&lt;/th&gt;&lt;td class="field-body"&gt;Path to save to. If not given, uses path given
+when opened or created.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;Workbook object&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Saving the active workbook to a new location/filename or saving to
+# a new location/filename
+# Note: You cannot use Save Workbook to convert from XLSX to XLS
+# or vice-versa
+Save Workbook&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;path=${OUTPUT_DIR}${/}orders.xlsx&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Saving the active workbook changes if location/filename were set
+# in Create Workbook or Open Workbook
+Save Workbook&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Saving the active workbook to a new location/filename or saving to&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# a new location/filename&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# Note: You cannot use Save Workbook to convert from XLSX to XLS&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# or vice-versa&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;./output/orders.xlsx&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Saving the active workbook changes if location/filename were set&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# in Create Workbook or Open Workbook&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;save_workbook&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Save the active workbook.</shortdoc>
+</kw>
+<kw name="Set Active Worksheet" lineno="507">
+<arguments repr="value: str | int">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="value: str | int">
+<name>value</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="int" typedoc="integer"/>
+</type>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Set the active worksheet.&lt;/p&gt;
+&lt;p&gt;This keyword can be used to set the default worksheet for keywords,
+which removes the need to specify the worksheet name for each keyword.
+It can always be overridden on a per-keyword basis.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param value:&lt;/th&gt;&lt;td class="field-body"&gt;Index or name of worksheet&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Set using the name of the worksheet
+Set Active Worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Customers&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Set using the index of the worksheet
+# Worksheet index begings at 0
+Set Active Worksheet&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;2&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Set using the name of the worksheet&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_active_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Customers&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Set using the index of the worksheet&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="c1"&gt;# Worksheet index begings at 0&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_active_worksheet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Set the active worksheet.</shortdoc>
+</kw>
+<kw name="Set Cell Format" lineno="930">
+<arguments repr="row: int, column: str | int, fmt: str | float, name: str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="row: int">
+<name>row</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="column: str | int">
+<name>column</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="int" typedoc="integer"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="fmt: str | float">
+<name>fmt</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="float" typedoc="float"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Set format for cell.&lt;/p&gt;
+&lt;p&gt;Does not affect the values themselves, but changes how the values
+are displayed when opening with an external application such as
+Microsoft Excel or LibreOffice Calc.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param row:&lt;/th&gt;&lt;td class="field-body"&gt;Index of row to write, e.g. 3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param column:&lt;/th&gt;&lt;td class="field-body"&gt;Name or index of column, e.g. C or 7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param fmt:&lt;/th&gt;&lt;td class="field-body"&gt;Format code for cell&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet (optional). Defaults to active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;fmt&lt;/tt&gt; argument accepts all format code values that
+are supported by the aforementioned applications.&lt;/p&gt;
+&lt;p&gt;Some examples of valid values:&lt;/p&gt;
+&lt;table border="1" class="docutils"&gt;
+&lt;colgroup&gt;
+&lt;col width="20%" /&gt;
+&lt;col width="80%" /&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;Format&lt;/th&gt;
+&lt;th class="head"&gt;Explanation&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;0.00&lt;/td&gt;
+&lt;td&gt;Number with two decimal precision&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;0%&lt;/td&gt;
+&lt;td&gt;Percentage without decimals&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;MM/DD/YY&lt;/td&gt;
+&lt;td&gt;Date with month, day, and year&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&amp;#64;&lt;/td&gt;
+&lt;td&gt;Text value&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;BOOLEAN&lt;/td&gt;
+&lt;td&gt;Boolean value&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Set value to have one decimal precision
+Set cell format&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;2&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;B&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;00.0&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Set value to have one decimal precision&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_cell_format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;B&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;00.0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Set format for cell.</shortdoc>
+</kw>
+<kw name="Set Cell Formula" lineno="1574">
+<arguments repr="range_string: str, formula: str, transpose: bool = False">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="range_string: str">
+<name>range_string</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="formula: str">
+<name>formula</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="transpose: bool = False">
+<name>transpose</name>
+<type name="bool" typedoc="boolean"/>
+<default>False</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Set cell formula for given range of cells.&lt;/p&gt;
+&lt;p&gt;If &lt;cite&gt;transpose&lt;/cite&gt; is set then formula is set for first cell of the
+range and the rest of cells will transpose the function to match
+to that cell.&lt;/p&gt;
+&lt;p&gt;Otherwise (by default) all cells will get the same formula.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param range_string:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;cell range&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param formula:&lt;/th&gt;&lt;td class="field-body"&gt;formula for the cell&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param transpose:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;on True the cell formulas will be transposed&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# all cells will have same formula
+Set Cell Formula&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;E2:E10&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;=B2+5&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;# cells will have transposed formulas
+# E2 will have =B2+5
+# E3 will have =B3+5
+# etc
+Set Cell Formula&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;E2:E10&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;=B2+5&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;True&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_cell_formula&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;E2:E10&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;=B2+5&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_cell_formula&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;E2:E10&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;=B2+5&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Set cell formula for given range of cells.</shortdoc>
+</kw>
+<kw name="Set Cell Value" lineno="887">
+<arguments repr="row: int, column: str | int, value: Any, name: str | None = None, fmt: str | float | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="row: int">
+<name>row</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="column: str | int">
+<name>column</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="int" typedoc="integer"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="value: Any">
+<name>value</name>
+<type name="Any" typedoc="Any"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="fmt: str | float | None = None">
+<name>fmt</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="float" typedoc="float"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Set a cell value in the given worksheet.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param row:&lt;/th&gt;&lt;td class="field-body"&gt;Index of row to write, e.g. 3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param column:&lt;/th&gt;&lt;td class="field-body"&gt;Name or index of column, e.g. C or 7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param value:&lt;/th&gt;&lt;td class="field-body"&gt;New value of cell&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet (optional). Defaults to active worksheet.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param fmt:&lt;/th&gt;&lt;td class="field-body"&gt;Format code for cell (optional)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# Set a value in the first row and column
+Set cell value&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Some value&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Set cell value&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Some value&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Set a value with cell formatting
+Set cell value&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;2&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;B&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${value}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;fmt=0%&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="c1"&gt;# Set a value in the first row and column&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_cell_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Some value&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_cell_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Some value&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+
+&lt;/span&gt;&lt;span class="c1"&gt;# Set a value with cell formatting&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_cell_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;B&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fmt&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;0%&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Set a cell value in the given worksheet.</shortdoc>
+</kw>
+<kw name="Set Cell Values" lineno="1665">
+<arguments repr="start_cell: str, values: list | Table, table_heading: bool = False">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="start_cell: str">
+<name>start_cell</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="values: list | Table">
+<name>values</name>
+<type name="Union" union="true">
+<type name="list" typedoc="list"/>
+<type name="Table"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="table_heading: bool = False">
+<name>table_heading</name>
+<type name="bool" typedoc="boolean"/>
+<default>False</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Set cell values given as list of lists or as a &lt;cite&gt;RPA.Tables.Table&lt;/cite&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note.&lt;/em&gt; Will overwrite cells if table structure causes cells to overlap.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param start_cell:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;starting cell in a string&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param values:&lt;/th&gt;&lt;td class="field-body"&gt;list of lists or a Table&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param table_heading:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;if values are given as a Table, this parameter
+defines if Table headings should be inserted as a row&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;&amp;#64;{all_rows}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;${headers}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;first&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;second&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;third&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;fourth&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;FOR&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${num}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;IN RANGE&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;1&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;2000&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="c"&gt;&amp;#64;{row}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${num}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${num+1}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${num*2}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${num*4}&lt;/span&gt;&lt;span class="p"&gt;
+    &lt;/span&gt;&lt;span class="c"&gt;Append To List&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${all_rows}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${row}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;END&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;#  Set Cell Values from Table (include headers)
+${table}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Create Table&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;${all_rows}&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;columns=${headers}&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Set Cell Values&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;G1&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;${table}&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;True&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;#  Set Cell Values from a list of lists
+# uncomment if headings should be added
+# Append To List  ${all_rows}   ${headers}
+Set Cell Values&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;M1&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;${all_rows}&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;# Simplest form of adding values
+&amp;#64;{values}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Evaluate&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;[[1,2,3],[4,5,6],['a','b','c','d']]&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;Set Cell Values&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A1&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;${values}&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;],[&lt;/span&gt;&lt;span class="s1"&gt;'a'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;'b'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;'c'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;'d'&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_cell_values&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;E2&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Set cell values given as list of lists or as a `RPA.Tables.Table`.</shortdoc>
+</kw>
+<kw name="Set Styles" lineno="1295">
+<arguments repr="range_string: str, font_name: str = None, family: str = None, size: int = None, bold: bool = False, italic: bool = False, underline: bool = False, strikethrough: bool = False, cell_fill: str = None, color: str = None, align_horizontal: str = None, align_vertical: str = None, number_format: str = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="range_string: str">
+<name>range_string</name>
+<type name="str" typedoc="string"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="font_name: str = None">
+<name>font_name</name>
+<type name="str" typedoc="string"/>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="family: str = None">
+<name>family</name>
+<type name="str" typedoc="string"/>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="size: int = None">
+<name>size</name>
+<type name="int" typedoc="integer"/>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="bold: bool = False">
+<name>bold</name>
+<type name="bool" typedoc="boolean"/>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="italic: bool = False">
+<name>italic</name>
+<type name="bool" typedoc="boolean"/>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="underline: bool = False">
+<name>underline</name>
+<type name="bool" typedoc="boolean"/>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="strikethrough: bool = False">
+<name>strikethrough</name>
+<type name="bool" typedoc="boolean"/>
+<default>False</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="cell_fill: str = None">
+<name>cell_fill</name>
+<type name="str" typedoc="string"/>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="color: str = None">
+<name>color</name>
+<type name="str" typedoc="string"/>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="align_horizontal: str = None">
+<name>align_horizontal</name>
+<type name="str" typedoc="string"/>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="align_vertical: str = None">
+<name>align_vertical</name>
+<type name="str" typedoc="string"/>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="number_format: str = None">
+<name>number_format</name>
+<type name="str" typedoc="string"/>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Set styles for range of cells.&lt;/p&gt;
+&lt;p&gt;Possible values for the &lt;cite&gt;align_horizontal&lt;/cite&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;general&lt;/li&gt;
+&lt;li&gt;left&lt;/li&gt;
+&lt;li&gt;center&lt;/li&gt;
+&lt;li&gt;right&lt;/li&gt;
+&lt;li&gt;fill&lt;/li&gt;
+&lt;li&gt;justify&lt;/li&gt;
+&lt;li&gt;centerContinuous&lt;/li&gt;
+&lt;li&gt;distributed&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Possible values for the &lt;cite&gt;align_vertical&lt;/cite&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;top&lt;/li&gt;
+&lt;li&gt;center&lt;/li&gt;
+&lt;li&gt;bottom&lt;/li&gt;
+&lt;li&gt;justify&lt;/li&gt;
+&lt;li&gt;distributed&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Some examples for &lt;cite&gt;number_formats&lt;/cite&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;General&lt;/li&gt;
+&lt;li&gt;0&lt;/li&gt;
+&lt;li&gt;0.00&lt;/li&gt;
+&lt;li&gt;#,##0&lt;/li&gt;
+&lt;li&gt;#,##0.00&lt;/li&gt;
+&lt;li&gt;&amp;quot;$&amp;quot;#,##0_);(&amp;quot;$&amp;quot;#,##0)&lt;/li&gt;
+&lt;li&gt;&amp;quot;$&amp;quot;#,##0_);[Red](&amp;quot;$&amp;quot;#,##0)&lt;/li&gt;
+&lt;li&gt;0%&lt;/li&gt;
+&lt;li&gt;0.00%&lt;/li&gt;
+&lt;li&gt;0.00E+00&lt;/li&gt;
+&lt;li&gt;# ?/?&lt;/li&gt;
+&lt;li&gt;# ??/??&lt;/li&gt;
+&lt;li&gt;mm-dd-yy&lt;/li&gt;
+&lt;li&gt;d-mmm-yy&lt;/li&gt;
+&lt;li&gt;d-mmm&lt;/li&gt;
+&lt;li&gt;h:mm AM/PM&lt;/li&gt;
+&lt;li&gt;h:mm:ss AM/PM&lt;/li&gt;
+&lt;li&gt;h:mm&lt;/li&gt;
+&lt;li&gt;h:mm:ss&lt;/li&gt;
+&lt;li&gt;m/d/yy h:mm&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param range_string:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;single cell or range of cells&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param font_name:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;name of the font&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param family:&lt;/th&gt;&lt;td class="field-body"&gt;font family name&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param size:&lt;/th&gt;&lt;td class="field-body"&gt;size for the font&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param bold:&lt;/th&gt;&lt;td class="field-body"&gt;font style bold&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param italic:&lt;/th&gt;&lt;td class="field-body"&gt;font style italics&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param underline:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;font style underline&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param strikethrough:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;font style strikethrough&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param cell_fill:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;cell fill color, in hex or color name&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param color:&lt;/th&gt;&lt;td class="field-body"&gt;font color, in hex or color name&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param align_horizontal:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;cell horizontal alignment&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param align_vertical:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;cell vertical alignment&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param number_format:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;cell number format&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Set Styles&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;A1:D4&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;bold=True&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;cell_fill=lightblue&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;align_horizontal=center&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;number_format=h:mm AM/PM&lt;/span&gt;&lt;span class="p"&gt;
+
+&lt;/span&gt;&lt;span class="c"&gt;Set Styles&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;E2&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;strikethrough=True&lt;/span&gt;&lt;span class="p"&gt;
+&lt;/span&gt;&lt;span class="c"&gt;...&lt;/span&gt;&lt;span class="p"&gt;  &lt;/span&gt;&lt;span class="c"&gt;color=FF0000&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_styles&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A1:D4&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;bold&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;font_name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Arial&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;24&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Set styles for range of cells.</shortdoc>
+</kw>
+<kw name="Set Worksheet Value" lineno="1031">
+<arguments repr="row: int, column: str | int, value: Any, name: str | None = None, fmt: str | float | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="row: int">
+<name>row</name>
+<type name="int" typedoc="integer"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="column: str | int">
+<name>column</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="int" typedoc="integer"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="value: Any">
+<name>value</name>
+<type name="Any" typedoc="Any"/>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="name: str | None = None">
+<name>name</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="fmt: str | float | None = None">
+<name>fmt</name>
+<type name="Union" union="true">
+<type name="str" typedoc="string"/>
+<type name="float" typedoc="float"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<returntype name="Any" typedoc="Any"/>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Alias for keyword &lt;tt class="docutils literal"&gt;Set cell value&lt;/tt&gt;, see the original keyword
+for documentation.&lt;/p&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Alias for keyword ``Set cell value``, see the original keyword for documentation.</shortdoc>
+</kw>
+<kw name="Unhide Columns" lineno="1526">
+<arguments repr="start_column: int | str, end_column: int | str | None = None">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="start_column: int | str">
+<name>start_column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+</type>
+</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="false" repr="end_column: int | str | None = None">
+<name>end_column</name>
+<type name="Union" union="true">
+<type name="int" typedoc="integer"/>
+<type name="str" typedoc="string"/>
+<type name="None" typedoc="None"/>
+</type>
+<default>None</default>
+</arg>
+</arguments>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Unhide column or columns in worksheet.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param start_column:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;column number or name to start from&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name" colspan="2"&gt;param end_column:&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td class="field-body"&gt;optional column number or name for last column&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;p&gt;Robot Framework example.&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;Unhide Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;D&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;# unhide columns A-D
+Unhide Columns&lt;/span&gt;&lt;span class="p"&gt;   &lt;/span&gt;&lt;span class="c"&gt;A&lt;/span&gt;&lt;span class="p"&gt;        &lt;/span&gt;&lt;span class="c"&gt;# unhide column A&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Python example.&lt;/p&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unhide_columns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;D&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unhide_columns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;A&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Unhide column or columns in worksheet.</shortdoc>
+</kw>
+<kw name="Worksheet Exists" lineno="465">
+<arguments repr="name: str">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="name: str">
+<name>name</name>
+<type name="str" typedoc="string"/>
+</arg>
+</arguments>
+<returntype name="bool" typedoc="boolean"/>
+<doc>&lt;div class="document"&gt;
+&lt;p&gt;Return True if worksheet with given name is in workbook.&lt;/p&gt;
+&lt;table class="docutils field-list" frame="void" rules="none"&gt;
+&lt;col class="field-name" /&gt;
+&lt;col class="field-body" /&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;param name:&lt;/th&gt;&lt;td class="field-body"&gt;Name of worksheet you are looking for&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="field"&gt;&lt;th class="field-name"&gt;return:&lt;/th&gt;&lt;td class="field-body"&gt;&lt;cite&gt;True&lt;/cite&gt; if the worksheet exists, &lt;cite&gt;False&lt;/cite&gt; otherwise&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;pre class="code robotframework literal-block"&gt;
+&lt;span class="c"&gt;# To use Worksheet Exists in a conditional statement set it to
+# a variable first, like you see here, and then compare the
+# variable to ${TRUE} or ${FALSE}
+${Does_Worksheet_Exist}=&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Worksheet Exists&lt;/span&gt;&lt;span class="p"&gt;    &lt;/span&gt;&lt;span class="c"&gt;Sheet&lt;/span&gt;
+&lt;/pre&gt;
+&lt;pre class="code python literal-block"&gt;
+&lt;span class="n"&gt;Does_Worksheet_Exist&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;worksheet_exists&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Sheet&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/div&gt;
+</doc>
+<shortdoc>Return True if worksheet with given name is in workbook.</shortdoc>
+</kw>
+</keywords>
+<typedocs>
+<type name="Any" type="Standard">
+<doc>&lt;p&gt;Any value is accepted. No conversion is done.&lt;/p&gt;</doc>
+<accepts>
+<type>Any</type>
+</accepts>
+<usages>
+<usage>Append Rows To Worksheet</usage>
+<usage>Create Worksheet</usage>
+<usage>Get Cell Value</usage>
+<usage>Get Worksheet Value</usage>
+<usage>Set Cell Value</usage>
+<usage>Set Worksheet Value</usage>
+</usages>
+</type>
+<type name="boolean" type="Standard">
+<doc>&lt;p&gt;Strings &lt;code&gt;TRUE&lt;/code&gt;, &lt;code&gt;YES&lt;/code&gt;, &lt;code&gt;ON&lt;/code&gt; and &lt;code&gt;1&lt;/code&gt; are converted to Boolean &lt;code&gt;True&lt;/code&gt;, the empty string as well as strings &lt;code&gt;FALSE&lt;/code&gt;, &lt;code&gt;NO&lt;/code&gt;, &lt;code&gt;OFF&lt;/code&gt; and &lt;code&gt;0&lt;/code&gt; are converted to Boolean &lt;code&gt;False&lt;/code&gt;, and the string &lt;code&gt;NONE&lt;/code&gt; is converted to the Python &lt;code&gt;None&lt;/code&gt; object. Other strings and other accepted values are passed as-is, allowing keywords to handle them specially if needed. All string comparisons are case-insensitive.&lt;/p&gt;
+&lt;p&gt;Examples: &lt;code&gt;TRUE&lt;/code&gt; (converted to &lt;code&gt;True&lt;/code&gt;), &lt;code&gt;off&lt;/code&gt; (converted to &lt;code&gt;False&lt;/code&gt;), &lt;code&gt;example&lt;/code&gt; (used as-is)&lt;/p&gt;</doc>
+<accepts>
+<type>string</type>
+<type>integer</type>
+<type>float</type>
+<type>None</type>
+</accepts>
+<usages>
+<usage>Append Rows To Worksheet</usage>
+<usage>Create Worksheet</usage>
+<usage>Move Range</usage>
+<usage>Open Workbook</usage>
+<usage>Read Worksheet</usage>
+<usage>Read Worksheet As Table</usage>
+<usage>Set Cell Formula</usage>
+<usage>Set Cell Values</usage>
+<usage>Set Styles</usage>
+<usage>Worksheet Exists</usage>
+</usages>
+</type>
+<type name="dictionary" type="Standard">
+<doc>&lt;p&gt;Strings must be Python &lt;a href="https://docs.python.org/library/stdtypes.html#dict"&gt;dictionary&lt;/a&gt; literals. They are converted to actual dictionaries using the &lt;a href="https://docs.python.org/library/ast.html#ast.literal_eval"&gt;ast.literal_eval&lt;/a&gt; function. They can contain any values &lt;code&gt;ast.literal_eval&lt;/code&gt; supports, including dictionaries and other containers.&lt;/p&gt;
+&lt;p&gt;If the type has nested types like &lt;code&gt;dict[str, int]&lt;/code&gt;, items are converted to those types automatically. This in new in Robot Framework 6.0.&lt;/p&gt;
+&lt;p&gt;Examples: &lt;code&gt;{'a': 1, 'b': 2}&lt;/code&gt;, &lt;code&gt;{'key': 1, 'nested': {'key': 2}}&lt;/code&gt;&lt;/p&gt;</doc>
+<accepts>
+<type>string</type>
+<type>Mapping</type>
+</accepts>
+<usages>
+<usage>Append Rows To Worksheet</usage>
+<usage>Read Worksheet</usage>
+</usages>
+</type>
+<type name="float" type="Standard">
+<doc>&lt;p&gt;Conversion is done using Python's &lt;a href="https://docs.python.org/library/functions.html#float"&gt;float&lt;/a&gt; built-in function.&lt;/p&gt;
+&lt;p&gt;Starting from RF 4.1, spaces and underscores can be used as visual separators for digit grouping purposes.&lt;/p&gt;
+&lt;p&gt;Examples: &lt;code&gt;3.14&lt;/code&gt;, &lt;code&gt;2.9979e8&lt;/code&gt;, &lt;code&gt;10 000.000 01&lt;/code&gt;&lt;/p&gt;</doc>
+<accepts>
+<type>string</type>
+<type>Real</type>
+</accepts>
+<usages>
+<usage>Insert Image To Worksheet</usage>
+<usage>Set Cell Format</usage>
+<usage>Set Cell Value</usage>
+<usage>Set Worksheet Value</usage>
+</usages>
+</type>
+<type name="integer" type="Standard">
+<doc>&lt;p&gt;Conversion is done using Python's &lt;a href="https://docs.python.org/library/functions.html#int"&gt;int&lt;/a&gt; built-in function. Floating point numbers are accepted only if they can be represented as integers exactly. For example, &lt;code&gt;1.0&lt;/code&gt; is accepted and &lt;code&gt;1.1&lt;/code&gt; is not.&lt;/p&gt;
+&lt;p&gt;Starting from RF 4.1, it is possible to use hexadecimal, octal and binary numbers by prefixing values with &lt;code&gt;0x&lt;/code&gt;, &lt;code&gt;0o&lt;/code&gt; and &lt;code&gt;0b&lt;/code&gt;, respectively.&lt;/p&gt;
+&lt;p&gt;Starting from RF 4.1, spaces and underscores can be used as visual separators for digit grouping purposes.&lt;/p&gt;
+&lt;p&gt;Examples: &lt;code&gt;42&lt;/code&gt;, &lt;code&gt;-1&lt;/code&gt;, &lt;code&gt;0b1010&lt;/code&gt;, &lt;code&gt;10 000 000&lt;/code&gt;, &lt;code&gt;0xBAD_C0FFEE&lt;/code&gt;&lt;/p&gt;</doc>
+<accepts>
+<type>string</type>
+<type>float</type>
+</accepts>
+<usages>
+<usage>Append Rows To Worksheet</usage>
+<usage>Auto Size Columns</usage>
+<usage>Delete Columns</usage>
+<usage>Delete Rows</usage>
+<usage>Find Empty Row</usage>
+<usage>Get Cell Value</usage>
+<usage>Get Worksheet Value</usage>
+<usage>Hide Columns</usage>
+<usage>Insert Columns After</usage>
+<usage>Insert Columns Before</usage>
+<usage>Insert Image To Worksheet</usage>
+<usage>Insert Rows After</usage>
+<usage>Insert Rows Before</usage>
+<usage>Move Range</usage>
+<usage>Read Worksheet</usage>
+<usage>Read Worksheet As Table</usage>
+<usage>Set Active Worksheet</usage>
+<usage>Set Cell Format</usage>
+<usage>Set Cell Value</usage>
+<usage>Set Styles</usage>
+<usage>Set Worksheet Value</usage>
+<usage>Unhide Columns</usage>
+</usages>
+</type>
+<type name="list" type="Standard">
+<doc>&lt;p&gt;Strings must be Python &lt;a href="https://docs.python.org/library/stdtypes.html#list"&gt;list&lt;/a&gt; literals. They are converted to actual lists using the &lt;a href="https://docs.python.org/library/ast.html#ast.literal_eval"&gt;ast.literal_eval&lt;/a&gt; function. They can contain any values &lt;code&gt;ast.literal_eval&lt;/code&gt; supports, including lists and other containers.&lt;/p&gt;
+&lt;p&gt;If the type has nested types like &lt;code&gt;list[int]&lt;/code&gt;, items are converted to those types automatically. This in new in Robot Framework 6.0.&lt;/p&gt;
+&lt;p&gt;Examples: &lt;code&gt;['one', 'two']&lt;/code&gt;, &lt;code&gt;[('one', 1), ('two', 2)]&lt;/code&gt;&lt;/p&gt;</doc>
+<accepts>
+<type>string</type>
+<type>Sequence</type>
+</accepts>
+<usages>
+<usage>Append Rows To Worksheet</usage>
+<usage>List Worksheets</usage>
+<usage>Read Worksheet</usage>
+<usage>Set Cell Values</usage>
+</usages>
+</type>
+<type name="None" type="Standard">
+<doc>&lt;p&gt;String &lt;code&gt;NONE&lt;/code&gt; (case-insensitive) is converted to Python &lt;code&gt;None&lt;/code&gt; object. Other values cause an error.&lt;/p&gt;</doc>
+<accepts>
+<type>string</type>
+</accepts>
+<usages>
+<usage>Append Rows To Worksheet</usage>
+<usage>Auto Size Columns</usage>
+<usage>Create Workbook</usage>
+<usage>Create Worksheet</usage>
+<usage>Delete Columns</usage>
+<usage>Delete Rows</usage>
+<usage>Find Empty Row</usage>
+<usage>Get Cell Value</usage>
+<usage>Get Worksheet Value</usage>
+<usage>Hide Columns</usage>
+<usage>Insert Image To Worksheet</usage>
+<usage>Open Workbook</usage>
+<usage>Read Worksheet</usage>
+<usage>Read Worksheet As Table</usage>
+<usage>Save Workbook</usage>
+<usage>Set Cell Format</usage>
+<usage>Set Cell Value</usage>
+<usage>Set Worksheet Value</usage>
+<usage>Unhide Columns</usage>
+</usages>
+</type>
+<type name="string" type="Standard">
+<doc>&lt;p&gt;All arguments are converted to Unicode strings.&lt;/p&gt;</doc>
+<accepts>
+<type>Any</type>
+</accepts>
+<usages>
+<usage>Append Rows To Worksheet</usage>
+<usage>Auto Size Columns</usage>
+<usage>Clear Cell Range</usage>
+<usage>Copy Cell Values</usage>
+<usage>Create Workbook</usage>
+<usage>Create Worksheet</usage>
+<usage>Delete Columns</usage>
+<usage>Find Empty Row</usage>
+<usage>Get Active Worksheet</usage>
+<usage>Get Cell Value</usage>
+<usage>Get Worksheet Value</usage>
+<usage>Hide Columns</usage>
+<usage>Insert Columns After</usage>
+<usage>Insert Columns Before</usage>
+<usage>Insert Image To Worksheet</usage>
+<usage>List Worksheets</usage>
+<usage>Move Range</usage>
+<usage>Open Workbook</usage>
+<usage>Read Worksheet</usage>
+<usage>Read Worksheet As Table</usage>
+<usage>Remove Worksheet</usage>
+<usage>Rename Worksheet</usage>
+<usage>Save Workbook</usage>
+<usage>Set Active Worksheet</usage>
+<usage>Set Cell Format</usage>
+<usage>Set Cell Formula</usage>
+<usage>Set Cell Value</usage>
+<usage>Set Cell Values</usage>
+<usage>Set Styles</usage>
+<usage>Set Worksheet Value</usage>
+<usage>Unhide Columns</usage>
+<usage>Worksheet Exists</usage>
+</usages>
+</type>
+</typedocs>
+</keywordspec>

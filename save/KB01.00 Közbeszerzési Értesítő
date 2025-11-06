@@ -1,0 +1,39 @@
+*** Settings ***
+Library    SeleniumLibrary
+Library    Dialogs
+
+*** Variables ***
+${URL}   https://kozbeszerzes.hu/adatbazis/keres/hirdetmeny/
+
+*** Settings ***
+Resource    KB01.01 CPV megadás
+
+
+*** Tasks ***
+Kezeld A Sütiket
+    Open Browser    ${URL}    chrome
+    Maximize Browser Window
+    Wait Until Page Contains Element    xpath=//button[.='Minden süti elfogadása']    timeout=15s
+    ${is_visible}=    Run Keyword And Return Status    Element Should Be Visible    xpath=//button[.='Minden süti elfogadása']
+   
+    Run Keyword If    ${is_visible}    Click Button    xpath=//button[.='Minden süti elfogadása']
+    ${ENTER}=    Set Variable    \\13
+    Sleep    1s
+
+CPV értékek megadása
+    KB01.01 CPV megadás
+    Click Element    xpath=//*[@class='form-control form-control_cpv']
+
+    Input Text   name=modal_cpv_search    22000000
+    Press Keys   name=modal_cpv_search   RETURN
+    Sleep    1s
+    ${tabs}=    Evaluate    "\\t" * 4
+    Press Keys    None        ${tabs}
+    Sleep    1s
+    
+    # Click hozzáadás
+
+    Click Element    css=#cpv__list_current > ul > li > div > div > a.cpv__add
+
+    ${nev}=  Get Value From User    Kérlek, add meg a neved:
+    Close Browser

@@ -1,0 +1,14 @@
+# Robot Framework core
+robotframework==7.0
+
+# Selenium library for web automation
+robotframework-seleniumlibrary
+
+# Excel handling
+openpyxl>=3.1.5
+
+# Image processing (compatible with Python 3.13)
+pillow>=10.4.0
+
+# Additional utilities
+psutil>=5.7.0

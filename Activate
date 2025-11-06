@@ -1,0 +1,12 @@
+Robot Framework 7.0+
+
+Nyomd meg a Ctrl+Shift+P, írd be: Python: Select Interpreter, és válaszd ki azt, amelyikben telepítve van az rpaframework.
+
+C:\munka\_ROBOT_FRAMEWORK\projekt_mappa\venv\Scripts\activate
+ .\venv\Scripts\activate  
+
+régi pillow installálás
+pip install pillow==10.2.0
+
+
+pip install -r requirements.txt

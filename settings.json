@@ -1,0 +1,12 @@
+{
+  "robot.python": "venv/Scripts/python.exe",
+  "robot.pythonpath": [
+    ".",
+    ".venv/Lib/site-packages"
+  ],
+  "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+  "python.terminal.activateEnvironment": true
+}
+// This is a settings file for a Python project using a virtual environment.
+// It specifies the path to the Python interpreter and the Python packages directory.
+
