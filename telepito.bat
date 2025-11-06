@@ -210,5 +210,9 @@ echo.
 echo KB01_run.bat fájl létrehozva a könnyű indításhoz!
 echo.
 echo Telepítés befejezve! ✅
+echo.
+echo A telepítő 3 másodperc múlva automatikusan bezárul...
+timeout /t 3 /nobreak >nul
+exit /b 0
 
 
