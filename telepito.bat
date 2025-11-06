@@ -1,31 +1,34 @@
 @echo off
 REM =====================================================
-REM  KB01 KÖZBESZERZÉSI ÉRTESÍTŐ ROBOT - TELEPÍTŐ v1.0
-REM  Robot Framework alapú automatizált közbeszerzési
-REM  adatbázis keresés és adatlekérés
+REM  KB01 KOZBESZERZESI ERTESITO ROBOT - TELEPITO v1.0
+REM  Robot Framework alapu automatizalt kozbeszerzesi
+REM  adatbazis kereses es adatlekeres
 REM =====================================================
+chcp 65001 >nul 2>&1
 setlocal EnableDelayedExpansion
 
 echo.
 echo =====================================================
-echo   KB01 KÖZBESZERZÉSI ÉRTESÍTŐ ROBOT TELEPÍTŐ v1.0
+echo   KB01 KOZBESZERZESI ERTESITO ROBOT TELEPITO v1.0
 echo   
-echo   Funkcionalitás:
-echo   - Automatikus cookie kezelés
-echo   - CPV értékek megadása és keresés
-echo   - Dátum szűrés beállítása
-echo   - Paginated táblázat adatok lekérése
+echo   Funkcionalitas:
+echo   - Automatikus cookie kezeles
+echo   - CPV ertekek megadasa es kereses
+echo   - Datum szures beallitasa
+echo   - Paginated tablazat adatok lekerése
 echo   - Excel export (eredmeny.xlsx)
-echo   - Selenium WebDriver integráció
-echo   - Python 3.13 kompatibilitás
+echo   - Selenium WebDriver integracio
+echo   - Python 3.13 kompatibilitas
 echo =====================================================
 echo.
 
-REM Telepítési könyvtár beállítása
-REM KB01 projekt telepítése az aktuális könyvtárba
+REM Telepitesi konyvtar beallitasa
+REM KB01 projekt telepitese az aktualis konyvtarba
 set "CURDIR=%CD%"
 set "TARGET_DIR=%CURDIR%"
-echo [INFO] Telepítési könyvtár: %TARGET_DIR%
+set "TARGET_DIR=%CURDIR:DownloadedRobots=InstalledRobots%"
+set "TARGET_DIR=%CURDIR:SandboxRobots=InstalledRobots%"
+echo [INFO] Telepitesi konyvtar: %TARGET_DIR%
 
 REM Ha nem letezik a konyvtar, hozzuk letre
 if not exist "%TARGET_DIR%" (
@@ -38,78 +41,78 @@ echo.
 echo Telepitesi cel: %TARGET_DIR%
 echo.
 
-REM Python 3.13 ellenőrzése
-echo Python verzió ellenőrzése...
+REM Python 3.13 ellenorzese
+echo Python verzio ellenorzese...
 "C:\Users\oLovasz\AppData\Local\Programs\Python\Python313\python.exe" --version >nul 2>&1
 if errorlevel 1 (
-    echo HIBA: Python 3.13 nincs telepítve vagy nem elérhető!
+    echo HIBA: Python 3.13 nincs telepitve vagy nem elerheto!
     echo.
-    echo Megoldások:
-    echo 1. Telepítse a Python 3.13+ verzióit a python.org oldalról
-    echo 2. Ellenőrizze a Python telepítési útvonalat
-    echo 3. Használja a rendszer PATH-ban lévő python parancsot
+    echo Megoldasok:
+    echo 1. Telepitse a Python 3.13+ verzioit a python.org oldalrol
+    echo 2. Ellenorizze a Python telepitesi utvonalat
+    echo 3. Hasznaja a rendszer PATH-ban levo python parancsot
     echo.
-    REM Próba rendszer python-nal
+    REM Proba rendszer python-nal
     python --version >nul 2>&1
     if errorlevel 1 (
-        echo Rendszer Python sem található!
+        echo Rendszer Python sem talalhato!
         pause
         exit /b 1
     ) else (
-        echo Rendszer Python használata...
+        echo Rendszer Python hasznalata...
         set "PYTHON_EXE=python"
     )
 ) else (
-    echo Python 3.13 megtalálva!
+    echo Python 3.13 megtalava!
     set "PYTHON_EXE=C:\Users\oLovasz\AppData\Local\Programs\Python\Python313\python.exe"
 )
 
-echo Python verzió:
+echo Python verzio:
 "%PYTHON_EXE%" --version
 
-REM Python verzió ellenőrzés
+REM Python verzio ellenorzes
 for /f "tokens=2" %%i in ('"%PYTHON_EXE%" --version 2^>^&1') do set PYTHON_VERSION=%%i
-echo Talált Python verzió: %PYTHON_VERSION%
+echo Talalt Python verzio: %PYTHON_VERSION%
 
 echo.
-echo Python modulok ellenőrzése...
+echo Python modulok ellenorzese...
 "%PYTHON_EXE%" -c "import sys; print('Python executable:', sys.executable)"
 echo.
 
-REM KB01 projekt fájlok már a helyükön vannak
-echo KB01 projekt fájlok ellenőrzése...
+REM KB01 projekt fajlok mar a helyukon vannak
+echo KB01 projekt fajlok ellenorzese...
 
-REM Fontos fájlok ellenőrzése
+REM Fontos fajlok ellenorzese
 if not exist "KB01_00*.robot" (
-    echo HIBA: Fő robot fájl hiányzik!
+    echo HIBA: Fo robot fajl hianyzik!
     pause
     exit /b 1
 )
 
 if not exist "excel_library.py" (
-    echo HIBA: Excel könyvtár hiányzik!
+    echo HIBA: Excel konyvtar hianyzik!
     pause
     exit /b 1
 )
 
 if not exist "requirements.txt" (
-    echo HIBA: requirements.txt hiányzik!
+    echo HIBA: requirements.txt hianyzik!
     pause
     exit /b 1
 )
 
-echo Minden szükséges fájl megtalálható.
+echo Minden szukseges fajl megtalalhato.
 echo.
 
-REM Csomagok telepítése a Python 3.13-ba
+REM Csomagok telepitese a Python 3.13-ba
 echo.
-echo Csomagok telepítése requirements.txt alapján...
+echo Csomagok telepitese requirements.txt alapjan...
 echo.
 
 "%PYTHON_EXE%" -m pip install --upgrade pip
 
 if errorlevel 1 (
-    echo HIBA: pip frissítés sikertelen!
+    echo HIBA: pip frissites sikertelen!
     pause
     exit /b 1
 )
@@ -117,9 +120,9 @@ if errorlevel 1 (
 "%PYTHON_EXE%" -m pip install -r requirements.txt
 
 if errorlevel 1 (
-    echo HIBA: Csomagok telepítése sikertelen!
+    echo HIBA: Csomagok telepitese sikertelen!
     echo.
-    echo Próbálja egyenként:
+    echo Probalja egyenkent:
     echo.
     "%PYTHON_EXE%" -m pip install robotframework==7.0
     "%PYTHON_EXE%" -m pip install robotframework-seleniumlibrary
@@ -130,67 +133,68 @@ if errorlevel 1 (
 )
 
 echo.
-echo Telepített csomagok ellenőrzése...
-"%PYTHON_EXE%" -c "import robot; print('✅ Robot Framework:', robot.__version__)"
-"%PYTHON_EXE%" -c "import SeleniumLibrary; print('✅ Selenium Library telepítve')"
-"%PYTHON_EXE%" -c "import openpyxl; print('✅ OpenPyXL telepítve')"
+echo Telepitett csomagok ellenorzese...
+"%PYTHON_EXE%" -c "import robot; print('[OK] Robot Framework:', robot.__version__)"
+"%PYTHON_EXE%" -c "import SeleniumLibrary; print('[OK] Selenium Library telepitve')"
+"%PYTHON_EXE%" -c "import openpyxl; print('[OK] OpenPyXL telepitve')"
 echo.
 
 echo.
 echo =========================================
-echo   KB01 TELEPÍTÉS SIKERES! ✅
+echo   KB01 TELEPITES SIKERES! [OK]
 echo =========================================
 echo.
-echo Telepített komponensek:
-echo ✅ Robot Framework 7.0 (tesztvezérlési keretrendszer)
-echo ✅ Selenium Library (WEB automatizálás)
-echo ✅ OpenPyXL (Excel kezelés)
-echo ✅ Pillow (képfeldolgozó)
-echo ✅ KB01 Excel Library (egyedi Excel könyvtár)
-echo ✅ Python 3.13 kompatibilitás
+echo Telepitett komponensek:
+echo [OK] Robot Framework 7.0 (tesztvezerlesi keretrendszer)
+echo [OK] Selenium Library (WEB automatizalas)
+echo [OK] OpenPyXL (Excel kezeles)
+echo [OK] Pillow (kepfeldolgozo)
+echo [OK] KB01 Excel Library (egyedi Excel konyvtar)
+echo [OK] Python 3.13 kompatibilitas
 echo.
-echo Projektfájlok:
-echo - KB01_00 Közbeszerzési Értesítő.robot (fő teszt)
-echo - KB01_01 CPV megadás.robot (CPV kezelés)
-echo - KB01_02 Találatok lekérése.robot (adatlekérés)
-echo - excel_library.py (Excel könyvtár)
-echo - requirements.txt (függőségek)
-echo - README.md (dokumentáció)
+echo Projektfajlok:
+echo - KB01_00 Kozbeszerzesi Ertesito.robot (fo teszt)
+echo - KB01_01 CPV megadas.robot (CPV kezeles)
+echo - KB01_02 Talalatok lekerése.robot (adatlekeres)
+echo - excel_library.py (Excel konyvtar)
+echo - requirements.txt (fuggoségek)
+echo - README.md (dokumentacio)
 echo.
 echo =========================================
-echo   HASZNÁLAT:
+echo   HASZNALAT:
 echo =========================================
 echo.
-echo Robot futtatása:
-echo   "%PYTHON_EXE%" -m robot "KB01_00 Közbeszerzési Értesítő.robot"
+echo Robot futtatasa:
+echo   "%PYTHON_EXE%" -m robot KB01_00*.robot
 echo.
-echo Eredmények:
-echo - log.html (részletes log)
-echo - report.html (összefoglaló)
-echo - eredmeny.xlsx (lekért adatok)
+echo Eredmenyek:
+echo - log.html (reszletes log)
+echo - report.html (osszefoglalo)
+echo - eredmeny.xlsx (lekert adatok)
 echo.
-echo Konfigurációs lehetőségek:
-echo - CPV kódok: KB01_01 CPV megadás.robot
-echo - Dátum szűrés: KB01_00 fájlban
-echo - URL módosítása: KB01_00 fájlban
+echo Konfiguracios lehetősegek:
+echo - CPV kodok: KB01_01 CPV megadas.robot
+echo - Datum szures: KB01_00 fajlban
+echo - URL modositasa: KB01_00 fajlban
 echo.
-echo Dokumentáció: README.md
+echo Dokumentacio: README.md
 echo =========================================
 echo.
-echo Futtatási script létrehozása...
+echo Futtatasi script letrehozasa...
 
-REM KB01_run.bat fájl létrehozása
+REM KB01_run.bat fajl letrehozasa
 echo @echo off > KB01_run.bat
+echo chcp 65001 ^>nul 2^>^&1 >> KB01_run.bat
 echo REM ========================================= >> KB01_run.bat
-echo REM  KB01 KÖZBESZERZÉSI ÉRTESÍTŐ ROBOT >> KB01_run.bat
+echo REM  KB01 KOZBESZERZESI ERTESITO ROBOT >> KB01_run.bat
 echo REM ========================================= >> KB01_run.bat
 echo echo. >> KB01_run.bat
 echo echo ========================================= >> KB01_run.bat
-echo echo   KB01 ROBOT INDÍTÁS >> KB01_run.bat
+echo echo   KB01 ROBOT INDITAS >> KB01_run.bat
 echo echo ========================================= >> KB01_run.bat
 echo echo. >> KB01_run.bat
 echo. >> KB01_run.bat
-echo echo Robot Framework teszt indítása... >> KB01_run.bat
+echo echo Robot Framework teszt inditasa... >> KB01_run.bat
 echo echo. >> KB01_run.bat
 echo "%PYTHON_EXE%" -m robot KB01_00*.robot >> KB01_run.bat
 echo. >> KB01_run.bat
@@ -199,19 +203,19 @@ echo echo ========================================= >> KB01_run.bat
 echo echo   TESZT BEFEJEZVE >> KB01_run.bat
 echo echo ========================================= >> KB01_run.bat
 echo echo. >> KB01_run.bat
-echo echo Eredmények: >> KB01_run.bat
-echo echo - log.html (részletes log) >> KB01_run.bat  
-echo echo - report.html (összefoglaló) >> KB01_run.bat
-echo echo - eredmeny.xlsx (lekért adatok) >> KB01_run.bat
+echo echo Eredmenyek: >> KB01_run.bat
+echo echo - log.html (reszletes log) >> KB01_run.bat  
+echo echo - report.html (osszefoglalo) >> KB01_run.bat
+echo echo - eredmeny.xlsx (lekert adatok) >> KB01_run.bat
 echo echo. >> KB01_run.bat
 echo pause >> KB01_run.bat
 
 echo.
-echo KB01_run.bat fájl létrehozva a könnyű indításhoz!
+echo KB01_run.bat fajl letrehozva a konnyu inditashoz!
 echo.
-echo Telepítés befejezve! ✅
+echo Telepites befejezve! [OK]
 echo.
-echo A telepítő 3 másodperc múlva automatikusan bezárul...
+echo A telepito 3 masodperc mulva automatikusan bezarul...
 timeout /t 3 /nobreak >nul
 exit /b 0
 

@@ -1,14 +1,15 @@
 @echo off 
+chcp 65001 >nul 2>&1 
 REM ========================================= 
-REM  KB01 KÖZBESZERZÉSI ÉRTESÍTŐ ROBOT 
+REM  KB01 KOZBESZERZESI ERTESITO ROBOT 
 REM ========================================= 
 echo. 
 echo ========================================= 
-echo   KB01 ROBOT INDÍTÁS 
+echo   KB01 ROBOT INDITAS 
 echo ========================================= 
 echo. 
  
-echo Robot Framework teszt indítása... 
+echo Robot Framework teszt inditasa... 
 echo. 
 "C:\Users\oLovasz\AppData\Local\Programs\Python\Python313\python.exe" -m robot KB01_00*.robot 
  
@@ -17,9 +18,9 @@ echo =========================================
 echo   TESZT BEFEJEZVE 
 echo ========================================= 
 echo. 
-echo Eredmények: 
-echo - log.html (részletes log)   
-echo - report.html (összefoglaló) 
-echo - eredmeny.xlsx (lekért adatok) 
+echo Eredmenyek: 
+echo - log.html (reszletes log)   
+echo - report.html (osszefoglalo) 
+echo - eredmeny.xlsx (lekert adatok) 
 echo. 
 pause 
