@@ -221,41 +221,66 @@ echo =========================================
 echo.
 echo Futtatasi script letrehozasa...
 
-REM KB01_run.bat fajl letrehozasa
-echo @echo off > KB01_run.bat
-echo chcp 65001 ^>nul 2^>^&1 >> KB01_run.bat
-echo REM ========================================= >> KB01_run.bat
-echo REM  KB01 KOZBESZERZESI ERTESITO ROBOT >> KB01_run.bat
-echo REM ========================================= >> KB01_run.bat
-echo echo. >> KB01_run.bat
-echo echo ========================================= >> KB01_run.bat
-echo echo   KB01 ROBOT INDITAS >> KB01_run.bat
-echo echo ========================================= >> KB01_run.bat
-echo echo. >> KB01_run.bat
-echo. >> KB01_run.bat
-echo echo Robot Framework teszt inditasa... >> KB01_run.bat
-echo echo. >> KB01_run.bat
-echo "%PYTHON_EXE%" -m robot KB01_00*.robot >> KB01_run.bat
-echo. >> KB01_run.bat
-echo echo. >> KB01_run.bat
-echo echo ========================================= >> KB01_run.bat
-echo echo   TESZT BEFEJEZVE >> KB01_run.bat
-echo echo ========================================= >> KB01_run.bat
-echo echo. >> KB01_run.bat
-echo echo Eredmenyek: >> KB01_run.bat
-echo echo - log.html (reszletes log) >> KB01_run.bat  
-echo echo - report.html (osszefoglalo) >> KB01_run.bat
-echo echo - eredmeny.xlsx (lekert adatok) >> KB01_run.bat
-echo echo. >> KB01_run.bat
-echo pause >> KB01_run.bat
+REM start.bat fajl letrehozasa
+echo @echo off > start.bat
+echo chcp 65001 ^>nul 2^>^&1 >> start.bat
+echo REM ========================================= >> start.bat
+echo REM  KB01 KOZBESZERZESI ERTESITO ROBOT >> start.bat
+echo REM ========================================= >> start.bat
+echo echo. >> start.bat
+echo echo ========================================= >> start.bat
+echo echo   KB01 ROBOT INDITAS >> start.bat
+echo echo ========================================= >> start.bat
+echo echo. >> start.bat
+echo. >> start.bat
+echo echo Robot Framework teszt inditasa... >> start.bat
+echo echo. >> start.bat
+echo "%PYTHON_EXE%" -m robot KB01_00*.robot >> start.bat
+echo. >> start.bat
+echo echo. >> start.bat
+echo echo ========================================= >> start.bat
+echo echo   TESZT BEFEJEZVE >> start.bat
+echo echo ========================================= >> start.bat
+echo echo. >> start.bat
+echo echo Eredmenyek: >> start.bat
+echo echo - log.html (reszletes log) >> start.bat  
+echo echo - report.html (osszefoglalo) >> start.bat
+echo echo - eredmeny.xlsx (lekert adatok) >> start.bat
+echo echo. >> start.bat
+
 
 echo.
-echo KB01_run.bat fajl letrehozva a konnyu inditashoz!
+echo start.bat fajl letrehozva a konnyu inditashoz!
 echo.
 echo Telepites befejezve! [OK]
 echo.
-echo A telepito 3 masodperc mulva automatikusan bezarul...
-timeout /t 3 /nobreak >nul
+echo =========================================
+echo   ROBOT AUTOMATIKUS INDITAS
+echo =========================================
+echo.
+echo Atvaltas a telepitett projektbe es robot inditasa...
+echo.
+
+REM Atvaltas a telepitett projekt konyvtaraba
+cd /d "%TARGET_DIR%"
+
+REM start.bat inditasa
+if exist "start.bat" (
+    echo Robot inditasa a telepitett konyvtarbol: %TARGET_DIR%
+    echo.
+    call start.bat
+) else (
+    echo HIBA: start.bat nem talalhato a telepitett konyvtarban!
+    echo Konyvtar: %TARGET_DIR%
+    echo.
+    echo Manualisan indithatja:
+    echo cd /d "%TARGET_DIR%"
+    echo start.bat
+    pause
+)
+
+echo.
+echo Telepites es robot futtas befejezve!
 exit /b 0
 
 
