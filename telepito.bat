@@ -80,30 +80,38 @@ if not "%TARGET_DIR%" == "%CURDIR%" (
     cd /d "%TARGET_DIR%"
 )
 
-REM Python 3.13 ellenorzese
+REM Python verzio ellenorzese
 echo Python verzio ellenorzese...
-"C:\Users\oLovasz\AppData\Local\Programs\Python\Python313\python.exe" --version >nul 2>&1
+
+REM Eloszor probaljuk a rendszer python parancsot
+python --version >nul 2>&1
 if errorlevel 1 (
-    echo HIBA: Python 3.13 nincs telepitve vagy nem elerheto!
-    echo.
-    echo Megoldasok:
-    echo 1. Telepitse a Python 3.13+ verzioit a python.org oldalrol
-    echo 2. Ellenorizze a Python telepitesi utvonalat
-    echo 3. Hasznaja a rendszer PATH-ban levo python parancsot
-    echo.
-    REM Proba rendszer python-nal
-    python --version >nul 2>&1
-    if errorlevel 1 (
-        echo Rendszer Python sem talalhato!
+    echo Rendszer Python nem talalhato a PATH-ban, probaljuk a specifikus utat...
+    
+    REM Proba a gyakori Python 3.13 telepitesi helyekkel
+    if exist "C:\Users\%USERNAME%\AppData\Local\Programs\Python\Python313\python.exe" (
+        echo Python 3.13 megtalalva a felhasznaloi konyvtarban!
+        set "PYTHON_EXE=C:\Users\%USERNAME%\AppData\Local\Programs\Python\Python313\python.exe"
+    ) else if exist "C:\Python313\python.exe" (
+        echo Python 3.13 megtalalva a rendszer konyvtarban!
+        set "PYTHON_EXE=C:\Python313\python.exe"
+    ) else if exist "C:\Program Files\Python313\python.exe" (
+        echo Python 3.13 megtalalva a Program Files-ban!
+        set "PYTHON_EXE=C:\Program Files\Python313\python.exe"
+    ) else (
+        echo HIBA: Python nem talalhato!
+        echo.
+        echo Megoldasok:
+        echo 1. Telepitse a Python 3.13+ verzioit a python.org oldalrol
+        echo 2. Adja hozza a Python-t a rendszer PATH-hoz
+        echo 3. Ellenorizze a Python telepitesi utvonalat
+        echo.
         pause
         exit /b 1
-    ) else (
-        echo Rendszer Python hasznalata...
-        set "PYTHON_EXE=python"
     )
 ) else (
-    echo Python 3.13 megtalava!
-    set "PYTHON_EXE=C:\Users\oLovasz\AppData\Local\Programs\Python\Python313\python.exe"
+    echo Rendszer Python hasznalata a PATH-bol...
+    set "PYTHON_EXE=python"
 )
 
 echo Python verzio:

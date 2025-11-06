@@ -11,7 +11,7 @@ echo.
  
 echo Robot Framework teszt inditasa... 
 echo. 
-"C:\Users\oLovasz\AppData\Local\Programs\Python\Python313\python.exe" -m robot KB01_00*.robot 
+python -m robot KB01_00*.robot 
  
 echo. 
 echo ========================================= 
