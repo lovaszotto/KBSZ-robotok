@@ -1,294 +1,86 @@
 @echo off
 REM =====================================================
-REM  KB01 KOZBESZERZESI ERTESITO ROBOT - TELEPITO v1.0
-REM  Robot Framework alapu automatizalt kozbeszerzesi
-REM  adatbazis kereses es adatlekeres
+REM  CLA-SSISTANT TELEPITO v3.0
+REM  GitHub Repository kezelő Robot Framework rendszer
+REM  Automatizált Git műveletek és repository kezelés
 REM =====================================================
-chcp 65001 >nul 2>&1
 setlocal EnableDelayedExpansion
 
 echo.
 echo =====================================================
-echo   KB01 KOZBESZERZESI ERTESITO ROBOT TELEPITO v1.0
+echo   CLA-SSISTANT TELEPITO v3.0
 echo   
 echo   Funkcionalitas:
-echo   - Automatikus cookie kezeles
-echo   - CPV ertekek megadasa es kereses
-echo   - Datum szures beallitasa
-echo   - Paginated tablazat adatok lekerése
-echo   - Excel export (eredmeny.xlsx)
-echo   - Selenium WebDriver integracio
-echo   - Python 3.13 kompatibilitas
+echo   - GitHub repository letoltes es kezeles
+echo   - Robot Framework automatizacio  
+echo   - Git parancsok vezerles
+echo   - Web interfesz tamogatas
+echo   - Repository lista lekeres API-val
 echo =====================================================
 echo.
 
-REM Telepitesi konyvtar beallitasa
-REM KB01 projekt telepitese az aktualis konyvtarba
+
+REM Telepítési könyvtár beállítása
 set "CURDIR=%CD%"
-set "TARGET_DIR=%CURDIR%"
-set "TARGET_DIR=%CURDIR:DownloadedRobots=InstalledRobots%"
-set "TARGET_DIR=%CURDIR:SandboxRobots=InstalledRobots%"
-echo [INFO] Telepitesi konyvtar: %TARGET_DIR%
-
-REM Ha nem letezik a konyvtar, hozzuk letre
-if not exist "%TARGET_DIR%" (
-    echo [INFO] Telepitesi konyvtar letrehozasa: %TARGET_DIR%
-    mkdir "%TARGET_DIR%"
-)
+echo [INFO] Telepítési könyvtár: %CURDIR%
 
 
-echo.
-echo Telepitesi cel: %TARGET_DIR%
-echo.
-
-REM Fajlok masolasa a cel konyvtarba
-if not "%TARGET_DIR%" == "%CURDIR%" (
-    echo.
-    echo Fajlok masolasa a telepitesi konyvtarba...
-    
-    REM Robot fajlok masolasa
-    copy "*.robot" "%TARGET_DIR%\" >nul
-    if errorlevel 1 (
-        echo HIBA: Robot fajlok masolasa sikertelen!
-        pause
-        exit /b 1
-    )
-    
-    REM Python konyvtarak masolasa
-    copy "*.py" "%TARGET_DIR%\" >nul
-    if errorlevel 1 (
-        echo HIBA: Python fajlok masolasa sikertelen!
-        pause
-        exit /b 1
-    )
-    
-    REM Konfiguracios fajlok masolasa
-    copy "requirements.txt" "%TARGET_DIR%\" >nul 2>&1
-    copy "README.md" "%TARGET_DIR%\" >nul 2>&1
-    copy ".gitignore" "%TARGET_DIR%\" >nul 2>&1
-    
-    REM Resources mappa masolasa
-    if exist "resources" (
-        echo Resources mappa masolasa...
-        xcopy "resources" "%TARGET_DIR%\resources" /E /I /Y >nul
-    )
-    
-    echo Fajlok sikeresen masolva.
-    echo.
-    
-    REM Atlepunk a cel konyvtarba a tovabbiakhoz
-    cd /d "%TARGET_DIR%"
-)
-
-REM Python verzio ellenorzese
-echo Python verzio ellenorzese...
-
-REM Eloszor probaljuk a rendszer python parancsot
+REM Python meglétének és verziójának ellenőrzése
+echo Python verzió ellenőrzése...
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo Rendszer Python nem talalhato a PATH-ban, probaljuk a specifikus utat...
-    
-    REM Proba a gyakori Python 3.13 telepitesi helyekkel
-    if exist "C:\Users\%USERNAME%\AppData\Local\Programs\Python\Python313\python.exe" (
-        echo Python 3.13 megtalalva a felhasznaloi konyvtarban!
-        set "PYTHON_EXE=C:\Users\%USERNAME%\AppData\Local\Programs\Python\Python313\python.exe"
-    ) else if exist "C:\Python313\python.exe" (
-        echo Python 3.13 megtalalva a rendszer konyvtarban!
-        set "PYTHON_EXE=C:\Python313\python.exe"
-    ) else if exist "C:\Program Files\Python313\python.exe" (
-        echo Python 3.13 megtalalva a Program Files-ban!
-        set "PYTHON_EXE=C:\Program Files\Python313\python.exe"
-    ) else (
-        echo HIBA: Python nem talalhato!
-        echo.
-        echo Megoldasok:
-        echo 1. Telepitse a Python 3.13+ verzioit a python.org oldalrol
-        echo 2. Adja hozza a Python-t a rendszer PATH-hoz
-        echo 3. Ellenorizze a Python telepitesi utvonalat
-        echo.
+    echo HIBA: Python nincs telepítve vagy nem elérhető a PATH-ban!
+    echo.
+    echo Telepítse a Python 3.8+ verziót, vagy adja hozzá a PATH-hoz!
+    pause
+    exit /b 1
+)
+echo Python verzió:
+python --version
+for /f "tokens=2" %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
+echo Talált Python verzió: %PYTHON_VERSION%
+echo.
+python -c "import sys; print('Python executable:', sys.executable)"
+echo.
+
+REM Virtuális környezet létrehozása
+echo Virtuális környezet létrehozása...
+if not exist ".venv" (
+    python -m venv .venv
+    if errorlevel 1 (
+        echo HIBA: Virtuális környezet létrehozása sikertelen!
         pause
         exit /b 1
     )
+    echo Virtuális környezet sikeresen létrehozva.
 ) else (
-    echo Rendszer Python hasznalata a PATH-bol...
-    set "PYTHON_EXE=python"
+    echo Virtuális környezet már létezik.
 )
-
-echo Python verzio:
-"%PYTHON_EXE%" --version
-
-REM Python verzio ellenorzes
-for /f "tokens=2" %%i in ('"%PYTHON_EXE%" --version 2^>^&1') do set PYTHON_VERSION=%%i
-echo Talalt Python verzio: %PYTHON_VERSION%
-
-echo.
-echo Python modulok ellenorzese...
-"%PYTHON_EXE%" -c "import sys; print('Python executable:', sys.executable)"
 echo.
 
-REM KB01 projekt fajlok mar a helyukon vannak
-echo KB01 projekt fajlok ellenorzese...
 
-REM Fontos fajlok ellenorzese
-if not exist "KB01_00*.robot" (
-    echo HIBA: Fo robot fajl hianyzik!
-    pause
-    exit /b 1
-)
-
-if not exist "excel_library.py" (
-    echo HIBA: Excel konyvtar hianyzik!
-    pause
-    exit /b 1
-)
-
-if not exist "requirements.txt" (
-    echo HIBA: requirements.txt hianyzik!
-    pause
-    exit /b 1
-)
-
-echo Minden szukseges fajl megtalalhato.
-echo.
-
-REM Csomagok telepitese a Python 3.13-ba
-echo.
-echo Csomagok telepitese requirements.txt alapjan...
-echo.
-
-"%PYTHON_EXE%" -m pip install --upgrade pip
+REM Csomagok telepítése a virtuális környezetbe
+echo Szükséges Python csomagok telepítése...
+.venv\Scripts\python.exe -m pip install --upgrade pip
+.venv\Scripts\python.exe -m pip install robotframework
+.venv\Scripts\python.exe -m pip install robotframework-seleniumlibrary
+.venv\Scripts\python.exe -m pip install requests
+.venv\Scripts\python.exe -m pip install flask
+.venv\Scripts\python.exe -m pip install selenium
+.venv\Scripts\python.exe -m pip install webdriver-manager
 
 if errorlevel 1 (
-    echo HIBA: pip frissites sikertelen!
-    pause
-    exit /b 1
-)
-
-"%PYTHON_EXE%" -m pip install -r requirements.txt
-
-if errorlevel 1 (
-    echo HIBA: Csomagok telepitese sikertelen!
-    echo.
-    echo Probalja egyenkent:
-    echo.
-    "%PYTHON_EXE%" -m pip install robotframework==7.0
-    "%PYTHON_EXE%" -m pip install robotframework-seleniumlibrary
-    "%PYTHON_EXE%" -m pip install openpyxl
-    "%PYTHON_EXE%" -m pip install pillow
+    echo HIBA: Csomagok telepítése sikertelen!
     pause
     exit /b 1
 )
 
 echo.
-echo Telepitett csomagok ellenorzese...
-"%PYTHON_EXE%" -c "import robot; print('[OK] Robot Framework:', robot.__version__)"
-"%PYTHON_EXE%" -c "import SeleniumLibrary; print('[OK] Selenium Library telepitve')"
-"%PYTHON_EXE%" -c "import openpyxl; print('[OK] OpenPyXL telepitve')"
-echo.
-
-echo.
 echo =========================================
-echo   KB01 TELEPITES SIKERES! [OK]
-echo =========================================
+echo TELEPÍTÉS SIKERES!
 echo.
-echo Telepitett komponensek:
-echo [OK] Robot Framework 7.0 (tesztvezerlesi keretrendszer)
-echo [OK] Selenium Library (WEB automatizalas)
-echo [OK] OpenPyXL (Excel kezeles)
-echo [OK] Pillow (kepfeldolgozo)
-echo [OK] KB01 Excel Library (egyedi Excel konyvtar)
-echo [OK] Python 3.13 kompatibilitas
+echo Telepítési hely: %CURDIR%
 echo.
-echo Projektfajlok:
-echo - KB01_00 Kozbeszerzesi Ertesito.robot (fo teszt)
-echo - KB01_01 CPV megadas.robot (CPV kezeles)
-echo - KB01_02 Talalatok lekerése.robot (adatlekeres)
-echo - excel_library.py (Excel konyvtar)
-echo - requirements.txt (fuggoségek)
-echo - README.md (dokumentacio)
-echo.
-echo =========================================
-echo   HASZNALAT:
-echo =========================================
-echo.
-echo Robot futtatasa:
-echo   "%PYTHON_EXE%" -m robot KB01_00*.robot
-echo.
-echo Eredmenyek:
-echo - log.html (reszletes log)
-echo - report.html (osszefoglalo)
-echo - eredmeny.xlsx (lekert adatok)
-echo.
-echo Konfiguracios lehetősegek:
-echo - CPV kodok: KB01_01 CPV megadas.robot
-echo - Datum szures: KB01_00 fajlban
-echo - URL modositasa: KB01_00 fajlban
-echo.
-echo Dokumentacio: README.md
-echo =========================================
-echo.
-echo Futtatasi script letrehozasa...
-
-REM start.bat fajl letrehozasa
-echo @echo off > start.bat
-echo chcp 65001 ^>nul 2^>^&1 >> start.bat
-echo REM ========================================= >> start.bat
-echo REM  KB01 KOZBESZERZESI ERTESITO ROBOT >> start.bat
-echo REM ========================================= >> start.bat
-echo echo. >> start.bat
-echo echo ========================================= >> start.bat
-echo echo   KB01 ROBOT INDITAS >> start.bat
-echo echo ========================================= >> start.bat
-echo echo. >> start.bat
-echo. >> start.bat
-echo echo Robot Framework teszt inditasa... >> start.bat
-echo echo. >> start.bat
-echo "%PYTHON_EXE%" -m robot KB01_00*.robot >> start.bat
-echo. >> start.bat
-echo echo. >> start.bat
-echo echo ========================================= >> start.bat
-echo echo   TESZT BEFEJEZVE >> start.bat
-echo echo ========================================= >> start.bat
-echo echo. >> start.bat
-echo echo Eredmenyek: >> start.bat
-echo echo - log.html (reszletes log) >> start.bat  
-echo echo - report.html (osszefoglalo) >> start.bat
-echo echo - eredmeny.xlsx (lekert adatok) >> start.bat
-echo echo. >> start.bat
-
-
-echo.
-echo start.bat fajl letrehozva a konnyu inditashoz!
-echo.
-echo Telepites befejezve! [OK]
-echo.
-echo =========================================
-echo   ROBOT AUTOMATIKUS INDITAS
-echo =========================================
-echo.
-echo Atvaltas a telepitett projektbe es robot inditasa...
-echo.
-
-REM Atvaltas a telepitett projekt konyvtaraba
-cd /d "%TARGET_DIR%"
-
-REM start.bat inditasa
-if exist "start.bat" (
-    echo Robot inditasa a telepitett konyvtarbol: %TARGET_DIR%
-    echo.
-    call start.bat
-) else (
-    echo HIBA: start.bat nem talalhato a telepitett konyvtarban!
-    echo Konyvtar: %TARGET_DIR%
-    echo.
-    echo Manualisan indithatja:
-    echo cd /d "%TARGET_DIR%"
-    echo start.bat
-    pause
-)
-
-echo.
-echo Telepites es robot futtas befejezve!
-exit /b 0
+exit 0
 
 
