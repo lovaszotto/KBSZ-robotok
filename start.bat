@@ -29,16 +29,11 @@ if %errorlevel% neq 0 (
 ) 
 echo Robot Framework teszt inditasa... 
 echo. 
-python -m robot KB01_00*.robot 
+python -m robot main.robot 
  
 echo. 
 echo ========================================= 
 echo   TESZT BEFEJEZVE 
 echo ========================================= 
-echo. 
-echo Eredmenyek: 
-echo - log.html (reszletes log)   
-echo - report.html (osszefoglalo) 
-echo - eredmeny.xlsx (lekert adatok) 
-echo. 
+
 exit 0
