@@ -1,17 +1,13 @@
 @echo off
 chcp 65001 >nul
 set PYTHONIOENCODING=utf-8
-REM =====================================================
-REM  CLA-SSISTANT TELEPITO v3.0
-REM  GitHub Repository kezelő Robot Framework rendszer
-REM  Automatizált Git műveletek és repository kezelés
-REM =====================================================
+
 setlocal EnableDelayedExpansion
 
 echo.
 echo =====================================================
 echo   CLA-SSISTANT TELEPITO v3.0
-echo   
+echo   gh release create v1.0.0 --title "v1.0.0" --notes "Első stabil verzió"
 echo   Funkcionalitas:
 echo   - GitHub repository letoltes es kezeles
 echo   - Robot Framework automatizacio  
