@@ -57,8 +57,8 @@ if %ERRORLEVEL% EQU 0 (
 )
 
 if %RC% neq 0 (
-    echo HIBA: Robot futtatas sikertelen. Nyomjon meg egy billentyut a folytatashoz...
-    pause
+    echo HIBA: Robot futtatas sikertelen.
+    
 )
 
 exit /b %RC%
