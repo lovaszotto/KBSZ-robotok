@@ -41,20 +41,18 @@ if %errorlevel% neq 0 (
 
 echo [3/3] Robot futtatasa...
 echo.
-.venv\Scripts\python.exe -m robot main.robot
+set "RF_TMP_OUTPUT=%TEMP%\robot_output_%RANDOM%.xml"
+echo Ideiglenes Robot output: %RF_TMP_OUTPUT%
+.venv\Scripts\python.exe -m robot --output "%RF_TMP_OUTPUT%" --log log.html --report report.html main.robot
 set RC=%ERRORLEVEL%
 echo Robot visszateresi kod: %RC%
 
-:: Wait 15 seconds and close any open Excel processes (so Excel windows opened by the run are closed)
-echo Excel bezarasa 15 masodperc mulva...
-timeout /t 15 /nobreak >nul
-echo Excel bezarasa...
-taskkill /IM excel.exe /F >nul 2>&1
-if %ERRORLEVEL% EQU 0 (
-    echo Excel sikeresen bezarva.
-) else (
-    echo Nincs futo Excel folyamat vagy nem sikerult befejezni.
-)
+REM Ne maradjon semmilyen output XML a futas utan
+del /q "%RF_TMP_OUTPUT%" >nul 2>&1
+
+
+
+
 
 if %RC% neq 0 (
     echo HIBA: Robot futtatas sikertelen.
