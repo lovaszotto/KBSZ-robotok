@@ -111,6 +111,9 @@ Beolvas Paginalt Tabla Adatokat
     END
     Save Workbook
     Close Workbook
+    #zárja be az excelt
+    Sleep    10
+    Run    taskkill /IM excel.exe /F
     #Run    start "" "${EXCEL_PATH}"
 
 
